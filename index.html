@@ -3,27 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UsserAI Football</title>
+    <title>UzarrAI — AI прогнозы</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
-        <!-- Header -->
-        <div class="header">
-            <span class="header-title">⚽ UsserAI</span>
-            <div class="header-user">
-                <span id="userName">Гость</span>
+        <!-- ========================================= -->
+        <!-- ЭКРАН: ТУТОРИАЛ -->
+        <!-- ========================================= -->
+        <div id="screen-onboarding" class="onboarding-container">
+            <div class="onboarding-slides" id="onboardingSlides">
+                <div class="onboarding-slide active">
+                    <div class="onboarding-icon">🧠</div>
+                    <h2 class="onboarding-title">ИИ-аналитика матчей</h2>
+                    <p class="onboarding-desc">
+                        Наш ИИ анализирует <b>форму команд</b>, <b>очные встречи</b>, 
+                        <b>травмы</b> и <b>статистику</b>.
+                    </p>
+                </div>
+                <div class="onboarding-slide">
+                    <div class="onboarding-icon">📊</div>
+                    <h2 class="onboarding-title">Глубокий разбор</h2>
+                    <p class="onboarding-desc">
+                        Каждый матч — <b>разбор на 4-5 абзацев</b> с обоснованием ставки.
+                    </p>
+                </div>
+                <div class="onboarding-slide">
+                    <div class="onboarding-icon">🎁</div>
+                    <h2 class="onboarding-title">3 бесплатных прогноза</h2>
+                    <p class="onboarding-desc">
+                        <b>3 аналитических разбора</b> бесплатно для новых пользователей.
+                    </p>
+                </div>
+                <div class="onboarding-slide">
+                    <div class="onboarding-icon">💎</div>
+                    <h2 class="onboarding-title">Премиум-доступ</h2>
+                    <p class="onboarding-desc">
+                        Неограниченные прогнозы и <b>эксклюзивные матчи</b>.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="onboarding-dots" id="onboardingDots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+                <span class="dot" data-index="3"></span>
+            </div>
+            
+            <div class="onboarding-buttons">
+                <button class="onboarding-skip" id="onboardingSkip">Пропустить</button>
+                <button class="onboarding-next" id="onboardingNext">Дальше →</button>
             </div>
         </div>
         
-        <!-- Screen: Main Menu -->
-        <div id="screen-main">
+        <!-- ========================================= -->
+        <!-- ЭКРАН: ГЛАВНЫЙ -->
+        <!-- ========================================= -->
+        <div id="screen-main" class="hidden">
+            <div class="header">
+                <span class="header-title">⚽ UzarrAI</span>
+                <span class="header-user" id="userName">Гость</span>
+            </div>
+            
             <div class="stats-card">
                 <div class="stats-title">🎁 Бесплатные анализы</div>
                 <div class="stats-progress">
                     <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        <div class="progress-fill" id="progressFill" style="width:0%"></div>
                     </div>
                     <span class="stats-text" id="statsText">0 / 3</span>
                 </div>
@@ -35,7 +83,9 @@
             </div>
         </div>
         
-        <!-- Screen: Matches -->
+        <!-- ========================================= -->
+        <!-- ЭКРАН: МАТЧИ -->
+        <!-- ========================================= -->
         <div id="screen-matches" class="hidden">
             <button class="back-btn" id="backToLeagues">← Назад к лигам</button>
             <div class="section-title" id="matchesTitle">Матчи</div>
@@ -44,16 +94,20 @@
             </div>
         </div>
         
-        <!-- Screen: Analysis -->
+        <!-- ========================================= -->
+        <!-- ЭКРАН: АНАЛИЗ -->
+        <!-- ========================================= -->
         <div id="screen-analysis" class="hidden">
             <button class="back-btn" id="backToMatches">← Назад к матчам</button>
             <div id="analysisContent">
-                <div class="loading">Загрузка анализа<span class="loading-dots"></span></div>
+                <div class="loading">Анализируем матч<span class="loading-dots"></span></div>
             </div>
         </div>
     </div>
     
-    <!-- Bottom Navigation -->
+    <!-- ========================================= -->
+    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+    <!-- ========================================= -->
     <div class="bottom-nav">
         <div class="nav-item active" data-screen="main">
             <div class="icon">🏠</div>
@@ -68,7 +122,7 @@
             <div class="label">Профиль</div>
         </div>
     </div>
-    
+
     <script src="app.js"></script>
 </body>
 </html>

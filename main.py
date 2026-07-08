@@ -9,7 +9,7 @@ from aiogram.client.default import DefaultBotProperties
 # 1. КОНФИГУРАЦИЯ
 # -------------------------------------------------------------
 BOT_TOKEN = "8950871603:AAGUz6OfqM66hU9KQsuKh759OW6I9Fp3BJQ"
-WEB_APP_URL = "https://твой-сайт.com"  # СЮДА ВСТАВЬ ССЫЛКУ НА ТВОЙ ХОСТИНГ
+WEB_APP_URL = "https://parabe11um5692.github.io/tg_app_1/" 
 
 logging.basicConfig(level=logging.INFO)
 
