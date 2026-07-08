@@ -1,4 +1,118 @@
 /* ============================================
+   ОНБОРДИНГ
+   ============================================ */
+.onboarding-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    padding: 20px 0;
+}
+
+.onboarding-slides {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    min-height: 320px;
+}
+
+.onboarding-slide {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+.onboarding-slide.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.onboarding-icon {
+    font-size: 72px;
+    margin-bottom: 24px;
+}
+
+.onboarding-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.onboarding-desc {
+    font-size: 16px;
+    line-height: 1.7;
+    color: #b0b0b8;
+    max-width: 320px;
+}
+
+.onboarding-desc b {
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff;
+}
+
+.onboarding-dots {
+    display: flex;
+    gap: 10px;
+    margin: 32px 0 24px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2a2a3a;
+    transition: background 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+
+.dot.active {
+    background: #667eea;
+    transform: scale(1.3);
+}
+
+.onboarding-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 360px;
+}
+
+.onboarding-skip {
+    background: transparent;
+    border: none;
+    color: #6a6a7a;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 12px 20px;
+}
+
+.onboarding-next {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.onboarding-next:active {
+    transform: scale(0.95);
+}
+
+/* ============================================
    БАЗА
    ============================================ */
 * {
@@ -39,9 +153,18 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
-.header-user {
-    font-size: 14px;
-    color: #6a6a7a;
+.header-profile-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.header-profile-btn:hover {
+    background: #1a1a2e;
 }
 
 /* ============================================
@@ -111,10 +234,6 @@ body {
     transform: scale(0.98);
 }
 
-.match-item:hover {
-    border-color: #667eea;
-}
-
 .match-item .tournament {
     font-size: 11px;
     color: #6a6a7a;
@@ -145,45 +264,6 @@ body {
     padding: 2px 10px;
     border-radius: 12px;
     margin-top: 6px;
-}
-
-/* ============================================
-   АНАЛИЗ (РАЗБОР)
-   ============================================ */
-.analysis-card {
-    background: #14141f;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 16px;
-    border: 1px solid #1e1e32;
-}
-
-.analysis-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.analysis-meta {
-    color: #6a6a7a;
-    font-size: 14px;
-    margin-bottom: 16px;
-}
-
-.analysis-text {
-    line-height: 1.7;
-    margin-bottom: 16px;
-    color: #c0c0c8;
-}
-
-.analysis-prediction {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 16px;
 }
 
 /* ============================================
@@ -285,7 +365,82 @@ body {
 }
 
 /* ============================================
-   КНОПКИ
+   ЛИЧНЫЙ КАБИНЕТ
+   ============================================ */
+.profile-header {
+    text-align: center;
+    padding: 20px 0 16px;
+    border-bottom: 1px solid #1a1a2e;
+    margin-bottom: 16px;
+}
+
+.profile-avatar {
+    font-size: 56px;
+    margin-bottom: 8px;
+}
+
+.profile-name {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.profile-tag {
+    font-size: 14px;
+    color: #6a6a7a;
+    margin: 4px 0 8px;
+}
+
+.profile-plan {
+    display: inline-block;
+    background: #14141f;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    border: 1px solid #1e1e32;
+}
+
+.profile-menu {
+    margin: 16px 0;
+}
+
+.profile-menu-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid #1a1a2e;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: #ffffff;
+    font-size: 15px;
+}
+
+.profile-menu-item:hover {
+    background: #0a0a0f;
+}
+
+.profile-menu-item span:last-child {
+    color: #6a6a7a;
+}
+
+.profile-tariff-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.profile-tariff-btn:active {
+    opacity: 0.8;
+}
+
+/* ============================================
+   КНОПКИ НАЗАД
    ============================================ */
 .back-btn {
     background: none;

@@ -10,12 +10,64 @@
 <body>
     <div id="app">
         <!-- ========================================= -->
+        <!-- ЭКРАН: ОНБОРДИНГ -->
+        <!-- ========================================= -->
+        <div id="screen-onboarding" class="onboarding-container">
+            <div class="onboarding-slides" id="onboardingSlides">
+                <div class="onboarding-slide active">
+                    <div class="onboarding-icon">🧠</div>
+                    <h2 class="onboarding-title">ИИ-аналитика матчей</h2>
+                    <p class="onboarding-desc">
+                        Наш ИИ анализирует <b>форму команд</b>, <b>очные встречи</b>, 
+                        <b>травмы</b> и <b>статистику</b> для точных прогнозов.
+                    </p>
+                </div>
+                <div class="onboarding-slide">
+                    <div class="onboarding-icon">📊</div>
+                    <h2 class="onboarding-title">Глубокий разбор</h2>
+                    <p class="onboarding-desc">
+                        Каждый матч — <b>разбор на 4-5 абзацев</b> с обоснованием 
+                        главной ставки и ключевыми факторами.
+                    </p>
+                </div>
+                <div class="onboarding-slide">
+                    <div class="onboarding-icon">🎁</div>
+                    <h2 class="onboarding-title">3 бесплатных прогноза</h2>
+                    <p class="onboarding-desc">
+                        <b>3 аналитических разбора</b> бесплатно для новых пользователей. 
+                        Попробуй и оцени качество!
+                    </p>
+                </div>
+                <div class="onboarding-slide">
+                    <div class="onboarding-icon">💎</div>
+                    <h2 class="onboarding-title">Премиум-доступ</h2>
+                    <p class="onboarding-desc">
+                        Неограниченные прогнозы, <b>эксклюзивные матчи</b> и 
+                        приоритетная поддержка. Оформляй подписку в один клик.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="onboarding-dots" id="onboardingDots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+                <span class="dot" data-index="3"></span>
+            </div>
+            
+            <div class="onboarding-buttons">
+                <button class="onboarding-skip" id="onboardingSkip">Пропустить</button>
+                <button class="onboarding-next" id="onboardingNext">Дальше →</button>
+            </div>
+        </div>
+        
+        <!-- ========================================= -->
         <!-- ЭКРАН: МАТЧИ -->
         <!-- ========================================= -->
-        <div id="screen-matches">
+        <div id="screen-matches" class="hidden">
             <div class="header">
                 <span class="header-title">⚽ UzarrAI</span>
-                <span class="header-user" id="userName">Гость</span>
+                <button class="header-profile-btn" id="profileBtn">👤</button>
             </div>
             
             <!-- Фильтр: Лиги -->
@@ -48,12 +100,44 @@
         </div>
         
         <!-- ========================================= -->
-        <!-- ЭКРАН: РАЗБОР МАТЧА (с тарифами) -->
+        <!-- ЭКРАН: ТАРИФЫ (для матча / экспресс) -->
         <!-- ========================================= -->
-        <div id="screen-analysis" class="hidden">
-            <button class="back-btn" id="backToMatches">← Назад к матчам</button>
-            <div id="analysisContent">
-                <div class="loading">Загрузка разбора<span class="loading-dots"></span></div>
+        <div id="screen-tariffs" class="hidden">
+            <button class="back-btn" id="backFromTariffs">← Назад</button>
+            <div id="tariffsContent"></div>
+        </div>
+        
+        <!-- ========================================= -->
+        <!-- ЭКРАН: ЛИЧНЫЙ КАБИНЕТ -->
+        <!-- ========================================= -->
+        <div id="screen-profile" class="hidden">
+            <button class="back-btn" id="backFromProfile">← Назад</button>
+            <div id="profileContent">
+                <div class="profile-header">
+                    <div class="profile-avatar">👤</div>
+                    <div class="profile-name" id="profileName">Артём</div>
+                    <div class="profile-tag" id="profileTag">@poland5692</div>
+                    <div class="profile-plan" id="profilePlan">Бесплатный доступ</div>
+                </div>
+                <div class="profile-menu">
+                    <div class="profile-menu-item" onclick="showGlossary()">
+                        <span>📖 Глоссарий</span>
+                        <span>→</span>
+                    </div>
+                    <div class="profile-menu-item" onclick="showTour()">
+                        <span>🎯 Тур по приложению</span>
+                        <span>→</span>
+                    </div>
+                    <div class="profile-menu-item" onclick="toggleTheme()">
+                        <span>🌙 Тема оформления</span>
+                        <span id="themeStatus">тёмная</span>
+                    </div>
+                    <div class="profile-menu-item" onclick="showSupport()">
+                        <span>🆘 Поддержка</span>
+                        <span>→</span>
+                    </div>
+                </div>
+                <button class="profile-tariff-btn" onclick="openTariffsFromProfile()">Открыть тарифы →</button>
             </div>
         </div>
     </div>
