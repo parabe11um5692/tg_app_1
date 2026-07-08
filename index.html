@@ -6,6 +6,10 @@
     <title>UzarrAI — AI прогнозы</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
+    <!-- ⚠️ ВАЖНО: СНАЧАЛА api.js, ПОТОМ matches-loader.js, ПОТОМ app.js -->
+    <script src="api.js"></script>
+    <script src="matches-loader.js"></script>
+    <script src="app.js"></script>
 </head>
 <body>
     <div id="app">
@@ -51,14 +55,15 @@
         <!-- ЭКРАН: МАТЧИ (ГЛАВНАЯ) -->
         <!-- ========================================= -->
         <div id="screen-matches" class="hidden">
-            <div class="header">
-                <span class="header-title">⚽ UzarrAI</span>
+            <!-- ХЕДЕР: только иконка профиля (фиксированная) -->
+            <div class="header-mini glass">
                 <button class="header-profile-btn" id="profileBtn">👤</button>
             </div>
             
-            <!-- МАТЧ ДНЯ (АВТОСЛАЙДЕР) -->
-            <div class="match-day-slider" id="matchDaySlider">
-                <div class="match-day-track" id="matchDayTrack">
+            <!-- МАТЧ ДНЯ (ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ) -->
+            <div class="match-day-scroll">
+                <div class="match-day-scroll-label" id="matchDayLabel">📅 Ближайшие матчи</div>
+                <div class="match-day-scroll-track" id="matchDayTrack">
                     <!-- Генерируется JS -->
                 </div>
             </div>
@@ -72,22 +77,47 @@
                 <button class="league-btn" data-league="conference">🏅 ЛК</button>
             </div>
             
-            <!-- СПИСОК МАТЧЕЙ ПО ВЫБРАННОЙ ЛИГЕ -->
+            <!-- СПИСОК МАТЧЕЙ -->
             <div id="matchesList">
                 <div class="loading">Загрузка матчей<span class="loading-dots"></span></div>
             </div>
         </div>
         
         <!-- ========================================= -->
-        <!-- ЭКРАН: AI (РАЗОБРАННЫЕ МАТЧИ) -->
+        <!-- ЭКРАН: AI (ТОП-СИГНАЛЫ) -->
         <!-- ========================================= -->
         <div id="screen-ai" class="hidden">
-            <div class="header">
-                <span class="header-title">⚽ UzarrAI</span>
+            <!-- ХЕДЕР: только иконка профиля (фиксированная) -->
+            <div class="header-mini glass">
                 <button class="header-profile-btn" id="profileBtnAI">👤</button>
             </div>
-            <div style="font-size:18px;font-weight:700;margin:12px 0;color:#ffffff;">🧠 AI · Разборы</div>
-            <div style="font-size:14px;color:#6a6a7a;margin-bottom:16px;">Матчи, которые уже проанализированы</div>
+            
+            <div style="font-size:18px;font-weight:700;color:#fff;margin:12px 0 4px;">🧠 Топ-сигналы дня</div>
+            
+            <div class="top-signals" id="topSignals"></div>
+            
+            <div class="filter-section">
+                <div class="filter-label">Лиги</div>
+                <div class="filter-tabs" id="aiLeagueFilters">
+                    <button class="filter-btn active" data-filter="all">Все</button>
+                    <button class="filter-btn" data-filter="apl">АПЛ</button>
+                    <button class="filter-btn" data-filter="seriea">Серия А</button>
+                    <button class="filter-btn" data-filter="laliga">Ла Лига</button>
+                    <button class="filter-btn" data-filter="bundesliga">Бундес-Лига</button>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <div class="filter-label">Лайв</div>
+                <div class="filter-tabs" id="aiTimeFilters">
+                    <button class="filter-btn active" data-filter="all">Все</button>
+                    <button class="filter-btn" data-filter="live">ЛАЙВ</button>
+                    <button class="filter-btn" data-filter="2h">2ч</button>
+                    <button class="filter-btn" data-filter="6h">6ч</button>
+                    <button class="filter-btn" data-filter="24h">24ч</button>
+                </div>
+            </div>
+            
             <div id="aiMatchesList">
                 <div class="loading">Загрузка<span class="loading-dots"></span></div>
             </div>
@@ -153,7 +183,5 @@
             <div class="label">Экспресс</div>
         </div>
     </div>
-
-    <script src="app.js"></script>
 </body>
 </html>
