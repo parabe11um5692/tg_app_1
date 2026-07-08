@@ -5,7 +5,7 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
 
-const user = tg.initDataUnsafe?.user || { id: 0, first_name: 'Гость', username: 'guest' };
+const user = tg.initDataUnsafe?.user || { id: 0, first_name: 'Артём', username: 'poland5692' };
 document.getElementById('profileName').textContent = user.first_name || 'Артём';
 document.getElementById('profileTag').textContent = '@' + (user.username || 'poland5692');
 
@@ -19,26 +19,16 @@ const hasSeenOnboarding = sessionStorage.getItem('uzarrai_onboarding_seen');
 function goToSlide(index) {
     const slides = document.querySelectorAll('.onboarding-slide');
     const dots = document.querySelectorAll('.dot');
-    
-    slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === index);
-    });
-    
-    dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === index);
-    });
-    
+    slides.forEach((slide, i) => slide.classList.toggle('active', i === index));
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
     currentSlide = index;
     const nextBtn = document.getElementById('onboardingNext');
     nextBtn.textContent = index === totalSlides - 1 ? '🚀 Начать' : 'Дальше →';
 }
 
 function nextSlide() {
-    if (currentSlide < totalSlides - 1) {
-        goToSlide(currentSlide + 1);
-    } else {
-        finishOnboarding();
-    }
+    if (currentSlide < totalSlides - 1) { goToSlide(currentSlide + 1); }
+    else { finishOnboarding(); }
 }
 
 function finishOnboarding() {
@@ -48,9 +38,7 @@ function finishOnboarding() {
     renderMatches();
 }
 
-function skipOnboarding() {
-    finishOnboarding();
-}
+function skipOnboarding() { finishOnboarding(); }
 
 document.addEventListener('DOMContentLoaded', () => {
     if (hasSeenOnboarding) {
@@ -64,28 +52,20 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.querySelectorAll('.dot').forEach((dot) => {
-    dot.addEventListener('click', () => {
-        goToSlide(parseInt(dot.dataset.index));
-    });
+    dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.index)));
 });
-
 document.getElementById('onboardingNext').addEventListener('click', nextSlide);
 document.getElementById('onboardingSkip').addEventListener('click', skipOnboarding);
 
-let touchStartX = 0;
-let touchEndX = 0;
-document.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-});
+// Свайп
+let touchStartX = 0, touchEndX = 0;
+document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
 document.addEventListener('touchend', (e) => {
     touchEndX = e.changedTouches[0].screenX;
     const diff = touchStartX - touchEndX;
     if (Math.abs(diff) > 50) {
-        if (diff > 0 && currentSlide < totalSlides - 1) {
-            nextSlide();
-        } else if (diff < 0 && currentSlide > 0) {
-            goToSlide(currentSlide - 1);
-        }
+        if (diff > 0 && currentSlide < totalSlides - 1) { nextSlide(); }
+        else if (diff < 0 && currentSlide > 0) { goToSlide(currentSlide - 1); }
     }
 });
 
@@ -95,12 +75,12 @@ document.addEventListener('touchend', (e) => {
 const state = {
     leagueFilter: 'all',
     timeFilter: 'all',
-    currentMatchId: null,
-    currentTariffContext: 'match' // 'match', 'express', 'analysis'
+    currentTournament: 'world',
+    currentTariffContext: 'match'
 };
 
 // ============================================================
-// ДАННЫЕ (МОК)
+// ДАННЫЕ
 // ============================================================
 const matchesData = {
     '2026-07-08': [
@@ -123,6 +103,16 @@ const matchesData = {
     ]
 };
 
+// Данные для вкладки AI (разобранные матчи)
+const aiMatches = [
+    { home: 'Франция', away: 'Марокко', tournament: 'Чемпионат мира 2026', time: '23:00 МСК', badge: '70% AI' },
+    { home: 'Карабаг', away: 'Морнар', tournament: 'Лига Европы', time: '19:00 МСК', badge: 'AI' },
+    { home: 'Алашкерт', away: 'Елимай Семей', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' },
+    { home: 'ФК Лиепаджа', away: 'Деҫис', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' },
+    { home: 'Дила', away: 'Виртус', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' },
+    { home: 'Хегелманн Литауен', away: 'Паиде', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' }
+];
+
 // ============================================================
 // ФИЛЬТРАЦИЯ МАТЧЕЙ
 // ============================================================
@@ -133,12 +123,11 @@ function getFilteredMatches() {
             allMatches.push({ ...match, date });
         });
     });
-    
     let filtered = allMatches;
     if (state.leagueFilter !== 'all') {
         filtered = filtered.filter(m => m.league === state.leagueFilter);
     }
-    // timeFilter пока не реализован
+    // Фильтр по времени (заглушка)
     return filtered;
 }
 
@@ -186,6 +175,37 @@ function renderMatches() {
 }
 
 // ============================================================
+// ОТРИСОВКА ВКЛАДКИ AI
+// ============================================================
+function renderAIMatches() {
+    const container = document.getElementById('aiMatchesList');
+    if (!container) return;
+    
+    if (aiMatches.length === 0) {
+        container.innerHTML = '<div class="loading">Нет разобранных матчей</div>';
+        return;
+    }
+    
+    let html = '';
+    aiMatches.forEach(match => {
+        html += `
+            <div class="ai-match-card" onclick="openTariffsForAI()">
+                <div class="left">
+                    <div class="tournament">${match.tournament}</div>
+                    <div class="teams">${match.home} vs ${match.away}</div>
+                </div>
+                <div class="right">
+                    <div class="time">${match.time}</div>
+                    <div class="badge">${match.badge}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// ============================================================
 // ФИЛЬТРЫ
 // ============================================================
 document.querySelectorAll('#leagueFilters .filter-btn').forEach(btn => {
@@ -207,16 +227,76 @@ document.querySelectorAll('#timeFilters .filter-btn').forEach(btn => {
 });
 
 // ============================================================
-// ТАРИФЫ
+// ТУРНИРЫ (СЛАЙДЕР)
 // ============================================================
-function renderTariffs(containerId = 'tariffsContent') {
+document.querySelectorAll('.tournament-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tournament-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentTournament = btn.dataset.tournament;
+        // Здесь можно фильтровать матчи по турниру
+        renderMatches();
+    });
+});
+
+// ============================================================
+// ОТКРЫТИЕ ТАРИФОВ
+// ============================================================
+function openTariffsForMatch(matchId) {
+    state.currentTariffContext = 'match';
+    document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-ai').classList.add('hidden');
+    document.getElementById('screen-tariffs').classList.remove('hidden');
+    renderTariffsSlider('tariffsContent', '🔓 Открой прогноз');
+}
+
+function openTariffsForAI() {
+    state.currentTariffContext = 'ai';
+    document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-ai').classList.add('hidden');
+    document.getElementById('screen-tariffs').classList.remove('hidden');
+    renderTariffsSlider('tariffsContent', '🧠 AI-разбор доступен по подписке');
+}
+
+function openTariffsForExpress() {
+    state.currentTariffContext = 'express';
+    document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-ai').classList.add('hidden');
+    document.getElementById('screen-tariffs').classList.remove('hidden');
+    renderTariffsSlider('tariffsContent', '⚡ Экспресс-доступ');
+}
+
+function openTariffsFromProfile() {
+    state.currentTariffContext = 'profile';
+    document.getElementById('screen-profile').classList.add('hidden');
+    document.getElementById('screen-tariffs').classList.remove('hidden');
+    renderTariffsSlider('tariffsContent', '💎 Выбери тариф');
+}
+
+function backFromTariffs() {
+    document.getElementById('screen-tariffs').classList.add('hidden');
+    if (state.currentTariffContext === 'profile') {
+        document.getElementById('screen-profile').classList.remove('hidden');
+    } else if (state.currentTariffContext === 'ai') {
+        document.getElementById('screen-ai').classList.remove('hidden');
+    } else {
+        document.getElementById('screen-matches').classList.remove('hidden');
+    }
+}
+
+document.getElementById('backFromTariffs').addEventListener('click', backFromTariffs);
+
+// ============================================================
+// ТАРИФЫ (СЛАЙДЕР)
+// ============================================================
+function renderTariffsSlider(containerId, title) {
     const container = document.getElementById(containerId);
     container.innerHTML = `
-        <div style="margin-bottom:16px;font-size:18px;font-weight:700;color:#ffffff;">
-            ${state.currentTariffContext === 'express' ? '⚡ Экспресс-доступ' : '🔓 Открой прогноз'}
-        </div>
-        <div class="tariffs-section">
-            <div class="tariff-card">
+        <div style="margin-bottom:16px;font-size:18px;font-weight:700;color:#ffffff;">${title}</div>
+        <div style="font-size:14px;color:#6a6a7a;margin-bottom:16px;">AI-прогнозы по всем матчам дня без лимитов и блокировки</div>
+        <div class="tariffs-slider">
+            <!-- Pro -->
+            <div class="tariff-card-slide">
                 <div class="tariff-name">Pro</div>
                 <div class="tariff-price">5 990 ₽<span class="period">/мес</span></div>
                 <ul class="tariff-features">
@@ -232,7 +312,8 @@ function renderTariffs(containerId = 'tariffsContent') {
                 </button>
             </div>
             
-            <div class="tariff-card popular">
+            <!-- MAX -->
+            <div class="tariff-card-slide popular">
                 <div class="tariff-name">MAX</div>
                 <div class="tariff-price">14 990 ₽<span class="period">/мес</span></div>
                 <ul class="tariff-features">
@@ -246,71 +327,47 @@ function renderTariffs(containerId = 'tariffsContent') {
                     💎 Оформить MAX
                 </button>
             </div>
-            
-            <div class="tariff-note">
-                ⚡ Автопродление. Отмена в любой момент.<br>
-                Прогнозы — аналитика, не гарантия результата.
-            </div>
+        </div>
+        <div class="tariff-note">
+            ⚡ Автопродление. Отмена в любой момент.<br>
+            Прогнозы — аналитика, не гарантия результата.
         </div>
     `;
 }
-
-// ============================================================
-// ОТКРЫТИЕ ТАРИФОВ ДЛЯ МАТЧА / ЭКСПРЕССА
-// ============================================================
-function openTariffsForMatch(matchId) {
-    state.currentMatchId = matchId;
-    state.currentTariffContext = 'match';
-    document.getElementById('screen-matches').classList.add('hidden');
-    document.getElementById('screen-tariffs').classList.remove('hidden');
-    renderTariffs('tariffsContent');
-}
-
-function openTariffsForExpress() {
-    state.currentTariffContext = 'express';
-    document.getElementById('screen-matches').classList.add('hidden');
-    document.getElementById('screen-tariffs').classList.remove('hidden');
-    renderTariffs('tariffsContent');
-}
-
-function openTariffsFromProfile() {
-    state.currentTariffContext = 'profile';
-    document.getElementById('screen-profile').classList.add('hidden');
-    document.getElementById('screen-tariffs').classList.remove('hidden');
-    renderTariffs('tariffsContent');
-}
-
-function backFromTariffs() {
-    document.getElementById('screen-tariffs').classList.add('hidden');
-    if (state.currentTariffContext === 'profile') {
-        document.getElementById('screen-profile').classList.remove('hidden');
-    } else {
-        document.getElementById('screen-matches').classList.remove('hidden');
-    }
-}
-
-document.getElementById('backFromTariffs').addEventListener('click', backFromTariffs);
 
 // ============================================================
 // ЛИЧНЫЙ КАБИНЕТ
 // ============================================================
 document.getElementById('profileBtn').addEventListener('click', () => {
     document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-ai').classList.add('hidden');
     document.getElementById('screen-profile').classList.remove('hidden');
 });
+
+// Для AI тоже нужна кнопка профиля
+const profileBtnAI = document.getElementById('profileBtnAI');
+if (profileBtnAI) {
+    profileBtnAI.addEventListener('click', () => {
+        document.getElementById('screen-matches').classList.add('hidden');
+        document.getElementById('screen-ai').classList.add('hidden');
+        document.getElementById('screen-profile').classList.remove('hidden');
+    });
+}
 
 document.getElementById('backFromProfile').addEventListener('click', () => {
     document.getElementById('screen-profile').classList.add('hidden');
     document.getElementById('screen-matches').classList.remove('hidden');
 });
 
-// Меню в профиле
+// ============================================================
+// МЕНЮ В ПРОФИЛЕ
+// ============================================================
 function showGlossary() {
-    tg.showAlert('📖 Глоссарий:\n\nИТБ — индивидуальный тотал больше\nФора — преимущество в голах\nТай-брейк — дополнительное время\n...');
+    tg.showAlert('📖 Глоссарий:\n\nИТБ — индивидуальный тотал больше\nФора — преимущество в голах\nТай-брейк — дополнительное время\nxG — ожидаемые голы\nВинлайн — победа в основное время');
 }
 
 function showTour() {
-    tg.showAlert('🎯 Тур по приложению:\n\n1. Выбери матч\n2. Оформи подписку\n3. Получи AI-прогноз');
+    tg.showAlert('🎯 Тур по приложению:\n\n1️⃣ Выбери матч на главной\n2️⃣ Оформи подписку Pro или MAX\n3️⃣ Получи AI-прогноз с разбором');
 }
 
 function toggleTheme() {
@@ -320,11 +377,24 @@ function toggleTheme() {
         status.textContent = 'светлая';
         document.body.style.background = '#ffffff';
         document.body.style.color = '#000000';
-        // Можно добавить и другие изменения
+        document.querySelectorAll('.match-item, .match-day-card, .ai-match-card, .tariff-card-slide, .profile-plan, .stats-card')
+            .forEach(el => {
+                if (el) {
+                    el.style.background = '#f5f5f5';
+                    el.style.borderColor = '#e0e0e0';
+                }
+            });
     } else {
         status.textContent = 'тёмная';
         document.body.style.background = '#0a0a0f';
         document.body.style.color = '#ffffff';
+        document.querySelectorAll('.match-item, .match-day-card, .ai-match-card, .tariff-card-slide, .profile-plan, .stats-card')
+            .forEach(el => {
+                if (el) {
+                    el.style.background = '#14141f';
+                    el.style.borderColor = '#1e1e32';
+                }
+            });
     }
 }
 
@@ -342,21 +412,17 @@ document.querySelectorAll('.nav-item').forEach(item => {
         
         const tab = item.dataset.tab;
         if (tab === 'matches') {
-            // Возврат к списку матчей
             document.getElementById('screen-tariffs').classList.add('hidden');
             document.getElementById('screen-profile').classList.add('hidden');
+            document.getElementById('screen-ai').classList.add('hidden');
             document.getElementById('screen-matches').classList.remove('hidden');
-        } else if (tab === 'analysis') {
-            // Вкладка "Разборы" — показываем тарифы
-            state.currentTariffContext = 'analysis';
-            document.getElementById('screen-matches').classList.add('hidden');
+        } else if (tab === 'ai') {
+            document.getElementById('screen-tariffs').classList.add('hidden');
             document.getElementById('screen-profile').classList.add('hidden');
-            document.getElementById('screen-tariffs').classList.remove('hidden');
-            renderTariffs('tariffsContent');
-            // Меняем заголовок
-            document.querySelector('#tariffsContent > div:first-child').textContent = '🧠 Все разборы доступны по подписке';
+            document.getElementById('screen-matches').classList.add('hidden');
+            document.getElementById('screen-ai').classList.remove('hidden');
+            renderAIMatches();
         } else if (tab === 'express') {
-            // Вкладка "Экспресс" — тарифы
             openTariffsForExpress();
         }
     });
@@ -365,5 +431,5 @@ document.querySelectorAll('.nav-item').forEach(item => {
 // ============================================================
 // ЗАПУСК
 // ============================================================
-// Если онбординг уже видели — матчи загружены, иначе они загрузятся после окончания онбординга
-// Но renderMatches вызывается в finishOnboarding и при прямом входе
+// Если онбординг уже видели — матчи загружены
+// Иначе они загрузятся после окончания онбординга

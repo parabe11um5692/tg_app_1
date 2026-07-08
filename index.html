@@ -17,44 +17,30 @@
                 <div class="onboarding-slide active">
                     <div class="onboarding-icon">🧠</div>
                     <h2 class="onboarding-title">ИИ-аналитика матчей</h2>
-                    <p class="onboarding-desc">
-                        Наш ИИ анализирует <b>форму команд</b>, <b>очные встречи</b>, 
-                        <b>травмы</b> и <b>статистику</b> для точных прогнозов.
-                    </p>
+                    <p class="onboarding-desc">Наш ИИ анализирует <b>форму команд</b>, <b>очные встречи</b>, <b>травмы</b> и <b>статистику</b>.</p>
                 </div>
                 <div class="onboarding-slide">
                     <div class="onboarding-icon">📊</div>
                     <h2 class="onboarding-title">Глубокий разбор</h2>
-                    <p class="onboarding-desc">
-                        Каждый матч — <b>разбор на 4-5 абзацев</b> с обоснованием 
-                        главной ставки и ключевыми факторами.
-                    </p>
+                    <p class="onboarding-desc">Каждый матч — <b>разбор на 4-5 абзацев</b> с обоснованием главной ставки.</p>
                 </div>
                 <div class="onboarding-slide">
                     <div class="onboarding-icon">🎁</div>
                     <h2 class="onboarding-title">3 бесплатных прогноза</h2>
-                    <p class="onboarding-desc">
-                        <b>3 аналитических разбора</b> бесплатно для новых пользователей. 
-                        Попробуй и оцени качество!
-                    </p>
+                    <p class="onboarding-desc"><b>3 аналитических разбора</b> бесплатно для новых пользователей.</p>
                 </div>
                 <div class="onboarding-slide">
                     <div class="onboarding-icon">💎</div>
                     <h2 class="onboarding-title">Премиум-доступ</h2>
-                    <p class="onboarding-desc">
-                        Неограниченные прогнозы, <b>эксклюзивные матчи</b> и 
-                        приоритетная поддержка. Оформляй подписку в один клик.
-                    </p>
+                    <p class="onboarding-desc">Неограниченные прогнозы, <b>эксклюзивные матчи</b> и приоритетная поддержка.</p>
                 </div>
             </div>
-            
             <div class="onboarding-dots" id="onboardingDots">
                 <span class="dot active" data-index="0"></span>
                 <span class="dot" data-index="1"></span>
                 <span class="dot" data-index="2"></span>
                 <span class="dot" data-index="3"></span>
             </div>
-            
             <div class="onboarding-buttons">
                 <button class="onboarding-skip" id="onboardingSkip">Пропустить</button>
                 <button class="onboarding-next" id="onboardingNext">Дальше →</button>
@@ -62,7 +48,7 @@
         </div>
         
         <!-- ========================================= -->
-        <!-- ЭКРАН: МАТЧИ -->
+        <!-- ЭКРАН: МАТЧИ (ГЛАВНАЯ) -->
         <!-- ========================================= -->
         <div id="screen-matches" class="hidden">
             <div class="header">
@@ -70,9 +56,37 @@
                 <button class="header-profile-btn" id="profileBtn">👤</button>
             </div>
             
-            <!-- Фильтр: Лиги -->
-            <div class="filter-section">
-                <div class="filter-label">Футбол</div>
+            <!-- Матч дня -->
+            <div class="match-day-card" onclick="openTariffsForMatch(4)">
+                <div class="match-day-badge">🔥 МАТЧ ДНЯ</div>
+                <div class="match-day-tournament">ЧЕМПИОНАТ МИРА 2026 - 1/4 ФИНАЛА</div>
+                <div class="match-day-teams">
+                    <div class="match-day-team">
+                        <span class="team-flag">🇫🇷</span>
+                        <span class="team-name">Франция</span>
+                        <span class="team-stars">★★★☆☆</span>
+                    </div>
+                    <span class="match-day-vs">VS</span>
+                    <div class="match-day-team">
+                        <span class="team-flag">🇲🇦</span>
+                        <span class="team-name">Марокко</span>
+                        <span class="team-stars">★★★☆☆</span>
+                    </div>
+                </div>
+                <div class="match-day-time">⏰ Завтра, 23:00 МСК · через 24 ч</div>
+                <button class="match-day-btn">📊 Открыть прогноз →</button>
+            </div>
+            
+            <!-- Турниры (слайдер) -->
+            <div class="tournaments-slider">
+                <button class="tournament-btn active" data-tournament="world">🌍 ЧМ 2026</button>
+                <button class="tournament-btn" data-tournament="europa">🏆 Лига Европы</button>
+                <button class="tournament-btn" data-tournament="champions">⭐ ЛЧ</button>
+                <button class="tournament-btn" data-tournament="conference">🏅 Лига Конференций</button>
+            </div>
+            
+            <!-- Фильтры -->
+            <div class="filter-row">
                 <div class="filter-tabs" id="leagueFilters">
                     <button class="filter-btn active" data-filter="all">Все</button>
                     <button class="filter-btn" data-filter="apl">АПЛ</button>
@@ -80,13 +94,9 @@
                     <button class="filter-btn" data-filter="laliga">Ла Лига</button>
                     <button class="filter-btn" data-filter="bundesliga">Бундес-Лига</button>
                 </div>
-            </div>
-            
-            <!-- Фильтр: Время -->
-            <div class="filter-section">
-                <div class="filter-label">Лайв</div>
                 <div class="filter-tabs" id="timeFilters">
                     <button class="filter-btn active" data-filter="all">Все</button>
+                    <button class="filter-btn" data-filter="live">ЛАЙВ</button>
                     <button class="filter-btn" data-filter="2h">2ч</button>
                     <button class="filter-btn" data-filter="6h">6ч</button>
                     <button class="filter-btn" data-filter="24h">24ч</button>
@@ -100,7 +110,22 @@
         </div>
         
         <!-- ========================================= -->
-        <!-- ЭКРАН: ТАРИФЫ (для матча / экспресс) -->
+        <!-- ЭКРАН: ВКЛАДКА AI (РАЗОБРАННЫЕ МАТЧИ) -->
+        <!-- ========================================= -->
+        <div id="screen-ai" class="hidden">
+            <div class="header">
+                <span class="header-title">⚽ UzarrAI</span>
+                <button class="header-profile-btn" id="profileBtnAI">👤</button>
+            </div>
+            <div style="font-size:18px;font-weight:700;margin:12px 0;color:#ffffff;">🧠 AI · ЛАЙВ</div>
+            <div style="font-size:14px;color:#6a6a7a;margin-bottom:16px;">🔥 Топ-сигналы дня</div>
+            <div id="aiMatchesList">
+                <div class="loading">Загрузка<span class="loading-dots"></span></div>
+            </div>
+        </div>
+        
+        <!-- ========================================= -->
+        <!-- ЭКРАН: ТАРИФЫ (СЛАЙДЕР) -->
         <!-- ========================================= -->
         <div id="screen-tariffs" class="hidden">
             <button class="back-btn" id="backFromTariffs">← Назад</button>
@@ -150,9 +175,9 @@
             <div class="icon">📋</div>
             <div class="label">Матчи</div>
         </div>
-        <div class="nav-item" data-tab="analysis">
+        <div class="nav-item" data-tab="ai">
             <div class="icon">🧠</div>
-            <div class="label">Разборы</div>
+            <div class="label">AI</div>
         </div>
         <div class="nav-item" data-tab="express">
             <div class="icon">⚡</div>

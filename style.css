@@ -9,14 +9,12 @@
     min-height: 80vh;
     padding: 20px 0;
 }
-
 .onboarding-slides {
     position: relative;
     width: 100%;
     max-width: 400px;
     min-height: 320px;
 }
-
 .onboarding-slide {
     display: none;
     flex-direction: column;
@@ -24,21 +22,14 @@
     text-align: center;
     animation: fadeIn 0.5s ease;
 }
-
 .onboarding-slide.active {
     display: flex;
 }
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
-
-.onboarding-icon {
-    font-size: 72px;
-    margin-bottom: 24px;
-}
-
+.onboarding-icon { font-size: 72px; margin-bottom: 24px; }
 .onboarding-title {
     font-size: 24px;
     font-weight: 700;
@@ -47,25 +38,18 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
 .onboarding-desc {
     font-size: 16px;
     line-height: 1.7;
     color: #b0b0b8;
     max-width: 320px;
 }
-
-.onboarding-desc b {
-    color: #ffffff;
-    -webkit-text-fill-color: #ffffff;
-}
-
+.onboarding-desc b { color: #ffffff; -webkit-text-fill-color: #ffffff; }
 .onboarding-dots {
     display: flex;
     gap: 10px;
     margin: 32px 0 24px;
 }
-
 .dot {
     width: 8px;
     height: 8px;
@@ -74,19 +58,16 @@
     transition: background 0.3s, transform 0.3s;
     cursor: pointer;
 }
-
 .dot.active {
     background: #667eea;
     transform: scale(1.3);
 }
-
 .onboarding-buttons {
     display: flex;
     justify-content: space-between;
     width: 100%;
     max-width: 360px;
 }
-
 .onboarding-skip {
     background: transparent;
     border: none;
@@ -95,7 +76,6 @@
     cursor: pointer;
     padding: 12px 20px;
 }
-
 .onboarding-next {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
@@ -107,20 +87,12 @@
     cursor: pointer;
     transition: transform 0.2s;
 }
-
-.onboarding-next:active {
-    transform: scale(0.95);
-}
+.onboarding-next:active { transform: scale(0.95); }
 
 /* ============================================
    БАЗА
    ============================================ */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #0a0a0f;
@@ -128,10 +100,7 @@ body {
     padding: 16px 16px 80px 16px;
     min-height: 100vh;
 }
-
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
 /* ============================================
    HEADER
@@ -144,7 +113,6 @@ body {
     border-bottom: 1px solid #1a1a2e;
     margin-bottom: 16px;
 }
-
 .header-title {
     font-size: 22px;
     font-weight: 700;
@@ -152,7 +120,6 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
-
 .header-profile-btn {
     background: none;
     border: none;
@@ -162,33 +129,123 @@ body {
     border-radius: 50%;
     transition: background 0.2s;
 }
+.header-profile-btn:hover { background: #1a1a2e; }
 
-.header-profile-btn:hover {
-    background: #1a1a2e;
+/* ============================================
+   МАТЧ ДНЯ
+   ============================================ */
+.match-day-card {
+    background: linear-gradient(145deg, #14141f, #1a1a2e);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #2a2a4a;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.match-day-card:active { transform: scale(0.98); }
+.match-day-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    color: #0a0a0f;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+.match-day-tournament {
+    font-size: 12px;
+    color: #6a6a7a;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+.match-day-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.match-day-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.team-flag { font-size: 28px; }
+.team-name { font-size: 18px; font-weight: 700; }
+.team-stars { font-size: 14px; color: #ffd700; }
+.match-day-vs {
+    color: #6a6a7a;
+    font-weight: 700;
+    font-size: 14px;
+}
+.match-day-time {
+    font-size: 13px;
+    color: #6a6a7a;
+    text-align: center;
+    margin-bottom: 12px;
+}
+.match-day-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.match-day-btn:active { opacity: 0.8; }
+
+/* ============================================
+   ТУРНИРЫ (СЛАЙДЕР)
+   ============================================ */
+.tournaments-slider {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    scrollbar-width: none;
+}
+.tournaments-slider::-webkit-scrollbar { display: none; }
+.tournament-btn {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    background: #14141f;
+    border: 1px solid #1e1e32;
+    border-radius: 20px;
+    color: #6a6a7a;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+.tournament-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
 }
 
 /* ============================================
    ФИЛЬТРЫ
    ============================================ */
-.filter-section {
+.filter-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 16px;
 }
-
-.filter-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #6a6a7a;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
 .filter-tabs {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
-
 .filter-btn {
     padding: 6px 16px;
     background: #14141f;
@@ -199,7 +256,6 @@ body {
     cursor: pointer;
     transition: all 0.3s;
 }
-
 .filter-btn.active {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -207,19 +263,15 @@ body {
 }
 
 /* ============================================
-   СПИСОК МАТЧЕЙ
+   МАТЧИ (СПИСОК)
    ============================================ */
-.match-day-group {
-    margin-bottom: 16px;
-}
-
+.match-day-group { margin-bottom: 16px; }
 .match-day-date {
     font-size: 14px;
     font-weight: 600;
     color: #6a6a7a;
     margin-bottom: 8px;
 }
-
 .match-item {
     background: #14141f;
     border-radius: 12px;
@@ -229,11 +281,7 @@ body {
     border: 1px solid #1e1e32;
     transition: transform 0.2s, border-color 0.2s;
 }
-
-.match-item:active {
-    transform: scale(0.98);
-}
-
+.match-item:active { transform: scale(0.98); }
 .match-item .tournament {
     font-size: 11px;
     color: #6a6a7a;
@@ -241,20 +289,17 @@ body {
     letter-spacing: 0.5px;
     margin-bottom: 4px;
 }
-
 .match-item .teams {
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-weight: 600;
 }
-
 .match-item .time {
     font-size: 13px;
     color: #6a6a7a;
     margin-top: 4px;
 }
-
 .match-item .ai-badge {
     display: inline-block;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -267,26 +312,75 @@ body {
 }
 
 /* ============================================
-   ТАРИФЫ
+   ВКЛАДКА AI
    ============================================ */
-.tariffs-section {
-    margin-top: 16px;
+.ai-match-card {
+    background: #14141f;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border: 1px solid #1e1e32;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ai-match-card .left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.ai-match-card .left .tournament {
+    font-size: 11px;
+    color: #6a6a7a;
+    text-transform: uppercase;
+}
+.ai-match-card .left .teams {
+    font-weight: 600;
+}
+.ai-match-card .right {
+    text-align: right;
+}
+.ai-match-card .right .time {
+    font-size: 13px;
+    color: #6a6a7a;
+}
+.ai-match-card .right .badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 12px;
+    margin-top: 4px;
+    display: inline-block;
 }
 
-.tariff-card {
+/* ============================================
+   ТАРИФЫ (СЛАЙДЕР)
+   ============================================ */
+.tariffs-slider {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 8px 4px 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+}
+.tariffs-slider::-webkit-scrollbar { display: none; }
+.tariff-card-slide {
+    min-width: 280px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
     background: #14141f;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 12px;
+    border-radius: 20px;
+    padding: 24px 20px;
     border: 1px solid #1e1e32;
+}
+.tariff-card-slide.popular {
+    border: 2px solid #667eea;
     position: relative;
 }
-
-.tariff-card.popular {
-    border: 2px solid #667eea;
-}
-
-.tariff-card.popular::before {
+.tariff-card-slide.popular::before {
     content: '🔥 ПОПУЛЯРНЫЙ';
     position: absolute;
     top: -10px;
@@ -298,40 +392,28 @@ body {
     padding: 2px 12px;
     border-radius: 12px;
 }
-
-.tariff-name {
-    font-size: 20px;
-    font-weight: 700;
-}
-
+.tariff-name { font-size: 20px; font-weight: 700; }
 .tariff-price {
     font-size: 28px;
     font-weight: 700;
     margin: 8px 0;
 }
-
 .tariff-price .period {
     font-size: 14px;
     font-weight: 400;
     color: #6a6a7a;
 }
-
 .tariff-features {
     list-style: none;
     padding: 0;
     margin: 12px 0;
 }
-
 .tariff-features li {
     padding: 4px 0;
     color: #b0b0b8;
     font-size: 14px;
 }
-
-.tariff-features li::before {
-    content: '✅ ';
-}
-
+.tariff-features li::before { content: '✅ '; }
 .tariff-btn {
     width: 100%;
     padding: 12px;
@@ -342,21 +424,15 @@ body {
     cursor: pointer;
     transition: opacity 0.2s;
 }
-
-.tariff-btn:active {
-    opacity: 0.8;
-}
-
+.tariff-btn:active { opacity: 0.8; }
 .tariff-btn.pro {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
 }
-
 .tariff-btn.max {
     background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
     color: #0a0a0f;
 }
-
 .tariff-note {
     font-size: 12px;
     color: #6a6a7a;
@@ -365,7 +441,7 @@ body {
 }
 
 /* ============================================
-   ЛИЧНЫЙ КАБИНЕТ
+   ПРОФИЛЬ
    ============================================ */
 .profile-header {
     text-align: center;
@@ -373,23 +449,13 @@ body {
     border-bottom: 1px solid #1a1a2e;
     margin-bottom: 16px;
 }
-
-.profile-avatar {
-    font-size: 56px;
-    margin-bottom: 8px;
-}
-
-.profile-name {
-    font-size: 20px;
-    font-weight: 700;
-}
-
+.profile-avatar { font-size: 56px; margin-bottom: 8px; }
+.profile-name { font-size: 20px; font-weight: 700; }
 .profile-tag {
     font-size: 14px;
     color: #6a6a7a;
     margin: 4px 0 8px;
 }
-
 .profile-plan {
     display: inline-block;
     background: #14141f;
@@ -398,11 +464,7 @@ body {
     font-size: 14px;
     border: 1px solid #1e1e32;
 }
-
-.profile-menu {
-    margin: 16px 0;
-}
-
+.profile-menu { margin: 16px 0; }
 .profile-menu-item {
     display: flex;
     justify-content: space-between;
@@ -413,15 +475,8 @@ body {
     color: #ffffff;
     font-size: 15px;
 }
-
-.profile-menu-item:hover {
-    background: #0a0a0f;
-}
-
-.profile-menu-item span:last-child {
-    color: #6a6a7a;
-}
-
+.profile-menu-item:hover { background: #0a0a0f; }
+.profile-menu-item span:last-child { color: #6a6a7a; }
 .profile-tariff-btn {
     width: 100%;
     padding: 14px;
@@ -434,10 +489,7 @@ body {
     cursor: pointer;
     transition: opacity 0.2s;
 }
-
-.profile-tariff-btn:active {
-    opacity: 0.8;
-}
+.profile-tariff-btn:active { opacity: 0.8; }
 
 /* ============================================
    КНОПКИ НАЗАД
@@ -467,7 +519,6 @@ body {
     background: #0a0a0f;
     z-index: 100;
 }
-
 .nav-item {
     text-align: center;
     cursor: pointer;
@@ -475,35 +526,23 @@ body {
     border-radius: 8px;
     transition: background 0.2s;
 }
-
-.nav-item.active {
-    background: #14141f;
-}
-
-.nav-item .icon {
-    font-size: 22px;
-}
-
+.nav-item.active { background: #14141f; }
+.nav-item .icon { font-size: 22px; }
 .nav-item .label {
     font-size: 10px;
     color: #6a6a7a;
 }
-
-.nav-item.active .label {
-    color: #ffffff;
-}
+.nav-item.active .label { color: #ffffff; }
 
 .loading {
     text-align: center;
     padding: 40px 0;
     color: #6a6a7a;
 }
-
 @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
-
 .loading-dots::after {
     content: '...';
     animation: pulse 1.5s infinite;
