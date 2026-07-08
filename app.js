@@ -36,7 +36,8 @@ function finishOnboarding() {
     document.getElementById('screen-onboarding').classList.add('hidden');
     document.getElementById('screen-matches').classList.remove('hidden');
     initMatchDaySlider();
-    renderTournamentSections();
+    renderMatches();
+    renderAIMatches();
 }
 
 function skipOnboarding() { finishOnboarding(); }
@@ -46,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('screen-onboarding').classList.add('hidden');
         document.getElementById('screen-matches').classList.remove('hidden');
         initMatchDaySlider();
-        renderTournamentSections();
+        renderMatches();
+        renderAIMatches();
         return;
     }
     document.getElementById('screen-onboarding').classList.remove('hidden');
@@ -75,11 +77,12 @@ document.addEventListener('touchend', (e) => {
 // СОСТОЯНИЕ
 // ============================================================
 const state = {
+    currentLeague: 'all',
     currentTariffContext: 'match'
 };
 
 // ============================================================
-// МАТЧ ДНЯ (СЛАЙДЕР)
+// МАТЧ ДНЯ (АВТОСЛАЙДЕР)
 // ============================================================
 const matchDayData = [
     {
@@ -133,12 +136,13 @@ const matchDayData = [
 ];
 
 let sliderIndex = 0;
+let sliderInterval = null;
 
 function initMatchDaySlider() {
     const track = document.getElementById('matchDayTrack');
     if (!track) return;
     
-    track.innerHTML = matchDayData.map((match, index) => `
+    track.innerHTML = matchDayData.map((match) => `
         <div class="match-day-card" onclick="openTariffsForMatch(${match.matchId})">
             <div class="match-day-badge">🔥 МАТЧ ДНЯ</div>
             <div class="match-day-tournament">${match.tournament}</div>
@@ -178,99 +182,168 @@ function initMatchDaySlider() {
         </div>
     `).join('');
     
-    updateSlider();
+    startAutoSlide();
     
-    // Кнопки
-    document.getElementById('sliderPrev').addEventListener('click', () => {
-        if (sliderIndex > 0) { sliderIndex--; updateSlider(); }
-    });
-    document.getElementById('sliderNext').addEventListener('click', () => {
-        if (sliderIndex < matchDayData.length - 1) { sliderIndex++; updateSlider(); }
-    });
-    
-    // Точки
-    const dotsContainer = document.getElementById('sliderDots');
-    dotsContainer.innerHTML = matchDayData.map((_, i) => `
-        <span class="slider-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>
-    `).join('');
-    dotsContainer.querySelectorAll('.slider-dot').forEach(dot => {
-        dot.addEventListener('click', () => {
-            sliderIndex = parseInt(dot.dataset.index);
-            updateSlider();
-        });
-    });
+    const slider = document.getElementById('matchDaySlider');
+    slider.addEventListener('mouseenter', stopAutoSlide);
+    slider.addEventListener('mouseleave', startAutoSlide);
 }
 
-function updateSlider() {
-    const track = document.getElementById('matchDayTrack');
-    track.style.transform = `translateX(-${sliderIndex * 100}%)`;
-    
-    document.querySelectorAll('.slider-dot').forEach((dot, i) => {
-        dot.classList.toggle('active', i === sliderIndex);
-    });
+function startAutoSlide() {
+    if (sliderInterval) clearInterval(sliderInterval);
+    sliderInterval = setInterval(() => {
+        sliderIndex = (sliderIndex + 1) % matchDayData.length;
+        const track = document.getElementById('matchDayTrack');
+        track.style.transform = `translateX(-${sliderIndex * 100}%)`;
+    }, 4000);
 }
 
-// ============================================================
-// ТУРНИРНЫЕ СЕКЦИИ
-// ============================================================
-const tournamentSectionsData = [
-    {
-        title: '🏆 Чемпионат мира',
-        matches: [
-            { home: 'Франция', away: 'Марокко', time: '23:00', matchId: 4 },
-            { home: 'Бразилия', away: 'Аргентина', time: '22:00', matchId: 7 }
-        ]
-    },
-    {
-        title: '🏆 Лига Европы',
-        matches: [
-            { home: 'Карабаг', away: 'Морнар', time: '19:00', matchId: 8 },
-            { home: 'Аякс', away: 'Рома', time: '21:00', matchId: 9 }
-        ]
-    },
-    {
-        title: '🏆 Лига Кубка',
-        matches: [
-            { home: 'Алашкерт', away: 'Елимай Семей', time: '19:00', matchId: 2 },
-            { home: 'ФК Лиепаджа', away: 'Деҫис', time: '19:00', matchId: 3 }
-        ]
+function stopAutoSlide() {
+    if (sliderInterval) {
+        clearInterval(sliderInterval);
+        sliderInterval = null;
     }
+}
+
+// ============================================================
+// ДАННЫЕ МАТЧЕЙ
+// ============================================================
+const matchesData = {
+    'all': [
+        { id: 1, home: 'Атлетик Клуб д\'Ескалдес', away: 'Морнар', time: '17:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
+        { id: 2, home: 'Алашкерт', away: 'Елимай Семей', time: '19:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
+        { id: 3, home: 'ФК Лиепаджа', away: 'Деҫис', time: '19:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
+        { id: 4, home: 'Ливерпуль', away: 'Реал Мадрид', time: '22:00 МСК', tournament: 'Лига Чемпионов', league: 'champions' },
+        { id: 5, home: 'Бавария', away: 'ПСЖ', time: '22:00 МСК', tournament: 'Лига Чемпионов', league: 'champions' }
+    ],
+    'world': [
+        { id: 7, home: 'Бразилия', away: 'Аргентина', time: '22:00 МСК', tournament: 'Чемпионат мира', league: 'world' },
+        { id: 8, home: 'Португалия', away: 'Англия', time: '20:00 МСК', tournament: 'Чемпионат мира', league: 'world' }
+    ],
+    'europa': [
+        { id: 9, home: 'Карабаг', away: 'Морнар', time: '19:00 МСК', tournament: 'Лига Европы', league: 'europa' },
+        { id: 10, home: 'Аякс', away: 'Рома', time: '21:00 МСК', tournament: 'Лига Европы', league: 'europa' }
+    ],
+    'champions': [
+        { id: 4, home: 'Ливерпуль', away: 'Реал Мадрид', time: '22:00 МСК', tournament: 'Лига Чемпионов', league: 'champions' },
+        { id: 5, home: 'Бавария', away: 'ПСЖ', time: '22:00 МСК', tournament: 'Лига Чемпионов', league: 'champions' }
+    ],
+    'conference': [
+        { id: 1, home: 'Атлетик Клуб д\'Ескалдес', away: 'Морнар', time: '17:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
+        { id: 2, home: 'Алашкерт', away: 'Елимай Семей', time: '19:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
+        { id: 3, home: 'ФК Лиепаджа', away: 'Деҫис', time: '19:00 МСК', tournament: 'Лига Конференций', league: 'conference' }
+    ]
+};
+
+// ============================================================
+// ДАННЫЕ ДЛЯ ВКЛАДКИ AI
+// ============================================================
+const aiMatches = [
+    { home: 'Франция', away: 'Марокко', tournament: 'Чемпионат мира 2026', time: '23:00 МСК', badge: '70% AI' },
+    { home: 'Ливерпуль', away: 'Реал Мадрид', tournament: 'Лига Чемпионов', time: '22:00 МСК', badge: 'AI' },
+    { home: 'Карабаг', away: 'Морнар', tournament: 'Лига Европы', time: '19:00 МСК', badge: 'AI' },
+    { home: 'Алашкерт', away: 'Елимай Семей', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' },
+    { home: 'ФК Лиепаджа', away: 'Деҫис', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' },
+    { home: 'Бавария', away: 'ПСЖ', tournament: 'Лига Чемпионов', time: '22:00 МСК', badge: 'AI' }
 ];
 
-function renderTournamentSections() {
-    const container = document.getElementById('tournamentSections');
-    if (!container) return;
+// ============================================================
+// ОТРИСОВКА МАТЧЕЙ (ГЛАВНАЯ)
+// ============================================================
+function renderMatches() {
+    const container = document.getElementById('matchesList');
+    const matches = matchesData[state.currentLeague] || matchesData['all'];
     
-    container.innerHTML = tournamentSectionsData.map(section => `
-        <div class="tournament-section">
-            <div class="tournament-section-title">${section.title}</div>
-            <div class="tournament-section-sub">Матчи · AI</div>
-            <div class="tournament-section-matches">
-                ${section.matches.map(match => `
-                    <div class="tournament-match" onclick="openTariffsForMatch(${match.matchId})">
-                        <span class="teams">${match.home} vs ${match.away}</span>
-                        <span class="time">${match.time}</span>
-                        <span class="badge">🧠 AI</span>
-                    </div>
-                `).join('')}
+    if (!matches || matches.length === 0) {
+        container.innerHTML = '<div class="loading">Нет матчей в выбранной лиге</div>';
+        return;
+    }
+    
+    let html = '';
+    matches.forEach(match => {
+        html += `
+            <div class="match-item" onclick="openTariffsForMatch(${match.id})">
+                <div class="tournament">${match.tournament}</div>
+                <div class="teams">
+                    <span>${match.home}</span>
+                    <span style="color:#6a6a7a;">vs</span>
+                    <span>${match.away}</span>
+                </div>
+                <div class="time">⏰ ${match.time}</div>
+                <span class="ai-badge">🧠 AI</span>
             </div>
-        </div>
-    `).join('');
+        `;
+    });
+    
+    container.innerHTML = html;
 }
 
 // ============================================================
-// ТАРИФЫ (СЛАЙДЕР)
+// ОТРИСОВКА ВКЛАДКИ AI
+// ============================================================
+function renderAIMatches() {
+    const container = document.getElementById('aiMatchesList');
+    if (!container) return;
+    
+    if (aiMatches.length === 0) {
+        container.innerHTML = '<div class="loading">Нет разобранных матчей</div>';
+        return;
+    }
+    
+    let html = '';
+    aiMatches.forEach(match => {
+        html += `
+            <div class="ai-match-card" onclick="openTariffsForAI()">
+                <div class="left">
+                    <div class="tournament">${match.tournament}</div>
+                    <div class="teams">${match.home} vs ${match.away}</div>
+                </div>
+                <div class="right">
+                    <div class="time">${match.time}</div>
+                    <div class="badge">${match.badge}</div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// ============================================================
+// ВЫБОР ЛИГИ
+// ============================================================
+document.querySelectorAll('.league-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.league-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.currentLeague = btn.dataset.league;
+        renderMatches();
+    });
+});
+
+// ============================================================
+// ОТКРЫТИЕ ТАРИФОВ
 // ============================================================
 function openTariffsForMatch(matchId) {
     state.currentTariffContext = 'match';
     document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-ai').classList.add('hidden');
     document.getElementById('screen-tariffs').classList.remove('hidden');
     renderTariffsSlider('tariffsContent', '🔓 Открой прогноз');
+}
+
+function openTariffsForAI() {
+    state.currentTariffContext = 'ai';
+    document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-ai').classList.add('hidden');
+    document.getElementById('screen-tariffs').classList.remove('hidden');
+    renderTariffsSlider('tariffsContent', '🧠 AI-разбор доступен по подписке');
 }
 
 function openTariffsForExpress() {
     state.currentTariffContext = 'express';
     document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-ai').classList.add('hidden');
     document.getElementById('screen-tariffs').classList.remove('hidden');
     renderTariffsSlider('tariffsContent', '⚡ Экспресс-доступ');
 }
@@ -286,6 +359,8 @@ function backFromTariffs() {
     document.getElementById('screen-tariffs').classList.add('hidden');
     if (state.currentTariffContext === 'profile') {
         document.getElementById('screen-profile').classList.remove('hidden');
+    } else if (state.currentTariffContext === 'ai') {
+        document.getElementById('screen-ai').classList.remove('hidden');
     } else {
         document.getElementById('screen-matches').classList.remove('hidden');
     }
@@ -294,7 +369,7 @@ function backFromTariffs() {
 document.getElementById('backFromTariffs').addEventListener('click', backFromTariffs);
 
 // ============================================================
-// ТАРИФЫ (СЛАЙДЕР)
+// ТАРИФЫ (СЛАЙДЕР КАК НА РЕФЕРЕНСЕ)
 // ============================================================
 function renderTariffsSlider(containerId, title) {
     const container = document.getElementById(containerId);
@@ -349,8 +424,18 @@ function renderTariffsSlider(containerId, title) {
 // ============================================================
 document.getElementById('profileBtn').addEventListener('click', () => {
     document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-ai').classList.add('hidden');
     document.getElementById('screen-profile').classList.remove('hidden');
 });
+
+const profileBtnAI = document.getElementById('profileBtnAI');
+if (profileBtnAI) {
+    profileBtnAI.addEventListener('click', () => {
+        document.getElementById('screen-matches').classList.add('hidden');
+        document.getElementById('screen-ai').classList.add('hidden');
+        document.getElementById('screen-profile').classList.remove('hidden');
+    });
+}
 
 document.getElementById('backFromProfile').addEventListener('click', () => {
     document.getElementById('screen-profile').classList.add('hidden');
@@ -375,7 +460,7 @@ function toggleTheme() {
         status.textContent = 'светлая';
         document.body.style.background = '#ffffff';
         document.body.style.color = '#000000';
-        document.querySelectorAll('.match-item, .match-day-card, .tournament-section, .tariff-card-slide, .profile-plan')
+        document.querySelectorAll('.match-item, .match-day-card, .ai-match-card, .tariff-card-slide, .profile-plan')
             .forEach(el => {
                 if (el) {
                     el.style.background = '#f5f5f5';
@@ -386,7 +471,7 @@ function toggleTheme() {
         status.textContent = 'тёмная';
         document.body.style.background = '#0a0a0f';
         document.body.style.color = '#ffffff';
-        document.querySelectorAll('.match-item, .match-day-card, .tournament-section, .tariff-card-slide, .profile-plan')
+        document.querySelectorAll('.match-item, .match-day-card, .ai-match-card, .tariff-card-slide, .profile-plan')
             .forEach(el => {
                 if (el) {
                     el.style.background = '#14141f';
@@ -412,7 +497,14 @@ document.querySelectorAll('.nav-item').forEach(item => {
         if (tab === 'matches') {
             document.getElementById('screen-tariffs').classList.add('hidden');
             document.getElementById('screen-profile').classList.add('hidden');
+            document.getElementById('screen-ai').classList.add('hidden');
             document.getElementById('screen-matches').classList.remove('hidden');
+        } else if (tab === 'ai') {
+            document.getElementById('screen-tariffs').classList.add('hidden');
+            document.getElementById('screen-profile').classList.add('hidden');
+            document.getElementById('screen-matches').classList.add('hidden');
+            document.getElementById('screen-ai').classList.remove('hidden');
+            renderAIMatches();
         } else if (tab === 'express') {
             openTariffsForExpress();
         }
@@ -422,5 +514,5 @@ document.querySelectorAll('.nav-item').forEach(item => {
 // ============================================================
 // ЗАПУСК
 // ============================================================
-// Если онбординг уже видели — матчи загружены
-// Иначе они загрузятся после окончания онбординга
+// renderMatches() и renderAIMatches() вызываются в finishOnboarding
+// и при прямом входе (если онбординг уже видели)

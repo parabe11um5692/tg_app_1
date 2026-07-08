@@ -56,24 +56,45 @@
                 <button class="header-profile-btn" id="profileBtn">👤</button>
             </div>
             
-            <!-- МАТЧ ДНЯ (СЛАЙДЕР) -->
+            <!-- МАТЧ ДНЯ (АВТОСЛАЙДЕР) -->
             <div class="match-day-slider" id="matchDaySlider">
                 <div class="match-day-track" id="matchDayTrack">
-                    <!-- Слайды генерируются JS -->
+                    <!-- Генерируется JS -->
                 </div>
-                <button class="slider-btn prev" id="sliderPrev">‹</button>
-                <button class="slider-btn next" id="sliderNext">›</button>
             </div>
-            <div class="slider-dots" id="sliderDots"></div>
             
-            <!-- СЕКЦИИ ТУРНИРОВ -->
-            <div class="tournament-sections" id="tournamentSections">
-                <!-- Генерируется JS -->
+            <!-- ВЫБОР ЛИГ -->
+            <div class="league-selector" id="leagueSelector">
+                <button class="league-btn active" data-league="all">Все</button>
+                <button class="league-btn" data-league="world">🌍 ЧМ</button>
+                <button class="league-btn" data-league="europa">🏆 ЛЕ</button>
+                <button class="league-btn" data-league="champions">⭐ ЛЧ</button>
+                <button class="league-btn" data-league="conference">🏅 ЛК</button>
+            </div>
+            
+            <!-- СПИСОК МАТЧЕЙ ПО ВЫБРАННОЙ ЛИГЕ -->
+            <div id="matchesList">
+                <div class="loading">Загрузка матчей<span class="loading-dots"></span></div>
             </div>
         </div>
         
         <!-- ========================================= -->
-        <!-- ЭКРАН: ТАРИФЫ (СЛАЙДЕР) -->
+        <!-- ЭКРАН: AI (РАЗОБРАННЫЕ МАТЧИ) -->
+        <!-- ========================================= -->
+        <div id="screen-ai" class="hidden">
+            <div class="header">
+                <span class="header-title">⚽ UzarrAI</span>
+                <button class="header-profile-btn" id="profileBtnAI">👤</button>
+            </div>
+            <div style="font-size:18px;font-weight:700;margin:12px 0;color:#ffffff;">🧠 AI · Разборы</div>
+            <div style="font-size:14px;color:#6a6a7a;margin-bottom:16px;">Матчи, которые уже проанализированы</div>
+            <div id="aiMatchesList">
+                <div class="loading">Загрузка<span class="loading-dots"></span></div>
+            </div>
+        </div>
+        
+        <!-- ========================================= -->
+        <!-- ЭКРАН: ТАРИФЫ -->
         <!-- ========================================= -->
         <div id="screen-tariffs" class="hidden">
             <button class="back-btn" id="backFromTariffs">← Назад</button>
@@ -122,6 +143,10 @@
         <div class="nav-item active" data-tab="matches">
             <div class="icon">📋</div>
             <div class="label">Матчи</div>
+        </div>
+        <div class="nav-item" data-tab="ai">
+            <div class="icon">🧠</div>
+            <div class="label">AI</div>
         </div>
         <div class="nav-item" data-tab="express">
             <div class="icon">⚡</div>
