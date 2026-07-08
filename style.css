@@ -11,127 +11,12 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #0a0a0f;
     color: #ffffff;
-    padding: 16px;
+    padding: 16px 16px 80px 16px;
     min-height: 100vh;
-    padding-bottom: 80px;
 }
 
 .hidden {
     display: none !important;
-}
-
-/* ============================================
-   ОНБОРДИНГ
-   ============================================ */
-.onboarding-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    padding: 20px 0;
-}
-
-.onboarding-slides {
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    min-height: 320px;
-}
-
-.onboarding-slide {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    animation: fadeIn 0.5s ease;
-}
-
-.onboarding-slide.active {
-    display: flex;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.onboarding-icon {
-    font-size: 72px;
-    margin-bottom: 24px;
-}
-
-.onboarding-title {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.onboarding-desc {
-    font-size: 16px;
-    line-height: 1.7;
-    color: #b0b0b8;
-    max-width: 320px;
-}
-
-.onboarding-desc b {
-    color: #ffffff;
-    -webkit-text-fill-color: #ffffff;
-}
-
-.onboarding-dots {
-    display: flex;
-    gap: 10px;
-    margin: 32px 0 24px;
-}
-
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #2a2a3a;
-    transition: background 0.3s, transform 0.3s;
-    cursor: pointer;
-}
-
-.dot.active {
-    background: #667eea;
-    transform: scale(1.3);
-}
-
-.onboarding-buttons {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 360px;
-}
-
-.onboarding-skip {
-    background: transparent;
-    border: none;
-    color: #6a6a7a;
-    font-size: 15px;
-    cursor: pointer;
-    padding: 12px 20px;
-}
-
-.onboarding-next {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    color: white;
-    font-size: 15px;
-    font-weight: 600;
-    padding: 12px 28px;
-    border-radius: 30px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.onboarding-next:active {
-    transform: scale(0.95);
 }
 
 /* ============================================
@@ -143,7 +28,7 @@ body {
     justify-content: space-between;
     padding: 12px 0;
     border-bottom: 1px solid #1a1a2e;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .header-title {
@@ -160,138 +45,110 @@ body {
 }
 
 /* ============================================
-   СТАТИСТИКА
+   ФИЛЬТРЫ
    ============================================ */
-.stats-card {
-    background: #14141f;
-    border-radius: 16px;
-    padding: 16px 20px;
-    margin-bottom: 20px;
-    border: 1px solid #1e1e32;
+.filter-section {
+    margin-bottom: 16px;
 }
 
-.stats-title {
+.filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6a6a7a;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 6px 16px;
+    background: #14141f;
+    border: 1px solid #1e1e32;
+    border-radius: 20px;
+    color: #6a6a7a;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+}
+
+/* ============================================
+   СПИСОК МАТЧЕЙ
+   ============================================ */
+.match-day-group {
+    margin-bottom: 16px;
+}
+
+.match-day-date {
     font-size: 14px;
+    font-weight: 600;
     color: #6a6a7a;
     margin-bottom: 8px;
 }
 
-.stats-progress {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.progress-bar {
-    flex: 1;
-    height: 8px;
-    background: #1e1e32;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #667eea, #764ba2);
-    border-radius: 4px;
-    transition: width 0.5s ease;
-}
-
-.stats-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: #b0b0b8;
-    white-space: nowrap;
-}
-
-/* ============================================
-   ЛИГИ
-   ============================================ */
-.section-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #ffffff;
-}
-
-.league-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.league-card {
+.match-item {
     background: #14141f;
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
     cursor: pointer;
     border: 1px solid #1e1e32;
-    transition: transform 0.2s;
+    transition: transform 0.2s, border-color 0.2s;
 }
 
-.league-card:active {
-    transform: scale(0.96);
+.match-item:active {
+    transform: scale(0.98);
 }
 
-.league-card .emoji {
-    font-size: 28px;
-    display: block;
-    margin-bottom: 8px;
+.match-item:hover {
+    border-color: #667eea;
 }
 
-.league-card .name {
+.match-item .tournament {
+    font-size: 11px;
+    color: #6a6a7a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.match-item .teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-weight: 600;
-    font-size: 15px;
-    color: #ffffff;
 }
 
-.league-card .count {
-    font-size: 12px;
+.match-item .time {
+    font-size: 13px;
     color: #6a6a7a;
     margin-top: 4px;
 }
 
-/* ============================================
-   МАТЧИ
-   ============================================ */
-.match-card {
-    background: #14141f;
+.match-item .ai-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 10px;
     border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    border: 1px solid #1e1e32;
-    transition: transform 0.2s;
-}
-
-.match-card:active {
-    transform: scale(0.98);
-}
-
-.match-teams {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-weight: 600;
-    color: #ffffff;
-}
-
-.match-vs {
-    color: #6a6a7a;
-    font-weight: 400;
-}
-
-.match-info {
-    display: flex;
-    justify-content: space-between;
     margin-top: 6px;
-    font-size: 13px;
-    color: #6a6a7a;
 }
 
 /* ============================================
-   АНАЛИЗ
+   АНАЛИЗ (РАЗБОР)
    ============================================ */
 .analysis-card {
     background: #14141f;
@@ -305,7 +162,6 @@ body {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 4px;
-    color: #ffffff;
 }
 
 .analysis-meta {
@@ -322,12 +178,110 @@ body {
 
 .analysis-prediction {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
     border-radius: 12px;
     padding: 16px;
     text-align: center;
     font-size: 18px;
     font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* ============================================
+   ТАРИФЫ
+   ============================================ */
+.tariffs-section {
+    margin-top: 16px;
+}
+
+.tariff-card {
+    background: #14141f;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 12px;
+    border: 1px solid #1e1e32;
+    position: relative;
+}
+
+.tariff-card.popular {
+    border: 2px solid #667eea;
+}
+
+.tariff-card.popular::before {
+    content: '🔥 ПОПУЛЯРНЫЙ';
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    color: #0a0a0f;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 12px;
+    border-radius: 12px;
+}
+
+.tariff-name {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.tariff-price {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 8px 0;
+}
+
+.tariff-price .period {
+    font-size: 14px;
+    font-weight: 400;
+    color: #6a6a7a;
+}
+
+.tariff-features {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+}
+
+.tariff-features li {
+    padding: 4px 0;
+    color: #b0b0b8;
+    font-size: 14px;
+}
+
+.tariff-features li::before {
+    content: '✅ ';
+}
+
+.tariff-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.tariff-btn:active {
+    opacity: 0.8;
+}
+
+.tariff-btn.pro {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.tariff-btn.max {
+    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+    color: #0a0a0f;
+}
+
+.tariff-note {
+    font-size: 12px;
+    color: #6a6a7a;
+    text-align: center;
+    margin-top: 12px;
 }
 
 /* ============================================
@@ -340,17 +294,7 @@ body {
     color: #667eea;
     padding: 8px 0;
     cursor: pointer;
-}
-
-.btn-back {
-    width: 100%;
-    padding: 12px;
-    background: #14141f;
-    border: 1px solid #1e1e32;
-    border-radius: 12px;
-    font-size: 16px;
-    cursor: pointer;
-    color: #ffffff;
+    margin-bottom: 12px;
 }
 
 /* ============================================

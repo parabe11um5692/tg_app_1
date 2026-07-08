@@ -9,316 +9,359 @@ const user = tg.initDataUnsafe?.user || { id: 0, first_name: 'Гость' };
 document.getElementById('userName').textContent = user.first_name;
 
 // ============================================================
-// ОНБОРДИНГ
-// ============================================================
-let currentSlide = 0;
-const totalSlides = 4;
-
-function goToSlide(index) {
-    const slides = document.querySelectorAll('.onboarding-slide');
-    const dots = document.querySelectorAll('.dot');
-    
-    slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === index);
-    });
-    
-    dots.forEach((dot, i) => {
-        dot.classList.toggle('active', i === index);
-    });
-    
-    currentSlide = index;
-    
-    const nextBtn = document.getElementById('onboardingNext');
-    nextBtn.textContent = index === totalSlides - 1 ? '🚀 Начать' : 'Дальше →';
-}
-
-function nextSlide() {
-    if (currentSlide < totalSlides - 1) {
-        goToSlide(currentSlide + 1);
-    } else {
-        finishOnboarding();
-    }
-}
-
-function finishOnboarding() {
-    document.getElementById('screen-onboarding').classList.add('hidden');
-    document.getElementById('screen-main').classList.remove('hidden');
-    renderMain();
-}
-
-document.querySelectorAll('.dot').forEach((dot) => {
-    dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.index)));
-});
-
-document.getElementById('onboardingNext').addEventListener('click', nextSlide);
-document.getElementById('onboardingSkip').addEventListener('click', finishOnboarding);
-
-// ============================================================
-// ОСНОВНОЕ ПРИЛОЖЕНИЕ
+// СОСТОЯНИЕ
 // ============================================================
 const state = {
-    leagues: [],
-    matches: [],
-    analyticsUsed: 0,
-    freeLimit: 3,
-    currentLeague: null
+    leagueFilter: 'all',
+    timeFilter: 'all',
+    currentMatchId: null
 };
 
 // ============================================================
-// API (мок-данные для демонстрации)
+// ДАННЫЕ (МОК)
 // ============================================================
-async function fetchLeagues() {
-    return {
-        leagues: [
-            { name: 'АПЛ', emoji: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', count: 5 },
-            { name: 'Ла-Лига', emoji: '🇪🇸', count: 4 },
-            { name: 'Бундес-Лига', emoji: '🇩🇪', count: 4 },
-            { name: 'Серия А', emoji: '🇮🇹', count: 4 },
-            { name: 'Лига 1', emoji: '🇫🇷', count: 3 }
-        ],
-        analytics_used: 0,
-        free_limit: 3
-    };
-}
+const matchesData = {
+    '2026-07-08': [
+        { id: 1, home: 'Атлетик Клуб д\'Ескалдес', away: 'Морнар', time: '17:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
+        { id: 2, home: 'Алашкерт', away: 'Елимай Семей', time: '19:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
+        { id: 3, home: 'ФК Лиепаджа', away: 'Деҫис', time: '19:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
+        { id: 4, home: 'Ливерпуль', away: 'Реал Мадрид', time: '22:00 МСК', tournament: 'Лига Чемпионов', league: 'champions' },
+        { id: 5, home: 'Бавария', away: 'ПСЖ', time: '22:00 МСК', tournament: 'Лига Чемпионов', league: 'champions' }
+    ],
+    '2026-07-09': [
+        { id: 6, home: 'Манчестер Сити', away: 'Челси', time: '19:00 МСК', tournament: 'АПЛ', league: 'apl' },
+        { id: 7, home: 'Арсенал', away: 'Тоттенхэм', time: '22:00 МСК', tournament: 'АПЛ', league: 'apl' },
+        { id: 8, home: 'Барселона', away: 'Реал Бетис', time: '21:00 МСК', tournament: 'Ла Лига', league: 'laliga' },
+        { id: 9, home: 'Милан', away: 'Интер', time: '20:00 МСК', tournament: 'Серия А', league: 'seriea' },
+        { id: 10, home: 'Боруссия Дортмунд', away: 'Лейпциг', time: '18:00 МСК', tournament: 'Бундес-Лига', league: 'bundesliga' }
+    ],
+    '2026-07-10': [
+        { id: 11, home: 'Ювентус', away: 'Наполи', time: '19:00 МСК', tournament: 'Серия А', league: 'seriea' },
+        { id: 12, home: 'Аякс', away: 'Рома', time: '21:00 МСК', tournament: 'Лига Европы', league: 'europa' }
+    ]
+};
 
-async function fetchMatches(league) {
-    const allMatches = {
-        'АПЛ': [
-            { id: 1, home_team: 'Ливерпуль', away_team: 'Манчестер Сити', date: '2026-06-26', rating: 4.8 },
-            { id: 2, home_team: 'Арсенал', away_team: 'Челси', date: '2026-06-26', rating: 4.6 }
-        ],
-        'Ла-Лига': [
-            { id: 3, home_team: 'Реал Мадрид', away_team: 'Барселона', date: '2026-06-27', rating: 4.9 },
-            { id: 4, home_team: 'Атлетико', away_team: 'Севилья', date: '2026-06-27', rating: 4.3 }
-        ],
-        'Бундес-Лига': [
-            { id: 5, home_team: 'Бавария', away_team: 'Боруссия Дортмунд', date: '2026-06-28', rating: 4.7 }
-        ],
-        'Серия А': [
-            { id: 6, home_team: 'Интер', away_team: 'Милан', date: '2026-06-28', rating: 4.5 }
-        ],
-        'Лига 1': [
-            { id: 7, home_team: 'ПСЖ', away_team: 'Марсель', date: '2026-06-29', rating: 4.4 }
-        ]
-    };
-    return { matches: allMatches[league] || [] };
-}
+// ============================================================
+// АНАЛИЗЫ (РАЗБОРЫ)
+// ============================================================
+const analysisData = {
+    1: {
+        home: 'Атлетик Клуб д\'Ескалдес',
+        away: 'Морнар',
+        tournament: 'Лига Конференций',
+        rating: 4.2,
+        analysis: '⚽ <b>Атлетик Клуб д\'Ескалдес vs Морнар</b>\n\n📊 <b>Ключевые факты:</b>\n• Атлетик выиграл 4 из 5 последних домашних матчей\n• Морнар пропускает в среднем 1.8 гола за матч\n• Обе команды забивают в 70% матчей\n\n📈 <b>Прогноз:</b> Победа Атлетика с форой -1.5\n⭐ <b>Ключевые игроки:</b> Кастильо, Йованович',
+        prediction: 'Победа Атлетика (1.65)'
+    },
+    4: {
+        home: 'Ливерпуль',
+        away: 'Реал Мадрид',
+        tournament: 'Лига Чемпионов',
+        rating: 4.9,
+        analysis: '🔥 <b>ФИНАЛ ЛИГИ ЧЕМПИОНОВ!</b>\n\n📊 <b>Ключевые факты:</b>\n• Ливерпуль непобедим дома в 10 матчах\n• Реал Мадрид выиграл 4 из 5 последних финалов\n• Салах и Нуньес в отличной форме\n• Винисиус — главная угроза для Ливерпуля\n\n📈 <b>Прогноз:</b> Тотал больше 2.5, обе забьют\n⭐ <b>Ключевые игроки:</b> Салах, Винисиус, Беллингем',
+        prediction: 'Тотал больше 2.5 (1.75)'
+    },
+    6: {
+        home: 'Манчестер Сити',
+        away: 'Челси',
+        tournament: 'АПЛ',
+        rating: 4.6,
+        analysis: '🔵 <b>Манчестер Сити vs Челси</b>\n\n📊 <b>Ключевые факты:</b>\n• Сити выиграл 6 из 7 последних матчей\n• Челси пропускает в каждом выездном матче\n• Холанд забивает в 9 из 10 матчей\n\n📈 <b>Прогноз:</b> Победа Сити\n⭐ <b>Ключевые игроки:</b> Холанд, Фоден, Палмер',
+        prediction: 'Победа Сити (1.50)'
+    }
+};
 
-async function fetchAnalysis(matchId) {
-    const analyses = {
-        1: {
-            home_team: 'Ливерпуль',
-            away_team: 'Манчестер Сити',
-            league: 'АПЛ',
-            date: '2026-06-26',
-            rating: 4.8,
-            analysis: '🔴 Ливерпуль vs Манчестер Сити 🔵\n\n📊 Ключевые факты:\n• Ливерпуль непобедим дома в 10 матчах\n• Сити забивает первым в 70% матчей\n• Средняя результативность: 3.2 гола за матч\n\n📈 Прогноз: Обе команды забьют\n⭐ Ключевые игроки: Салах, Холанд',
-            prediction: 'Обе забьют (1.85)',
-            remaining: 1
-        },
-        3: {
-            home_team: 'Реал Мадрид',
-            away_team: 'Барселона',
-            league: 'Ла-Лига',
-            date: '2026-06-27',
-            rating: 4.9,
-            analysis: '🔴⚪ Реал Мадрид vs Барселона 🔵🔴\n\n📊 Ключевые факты:\n• Эль-Класико — главное дерби Испании\n• Реал выиграл 3 из 5 последних встреч\n• Барселона забивает в среднем 2.1 гола за матч\n\n📈 Прогноз: Тотал больше 2.5 голов\n⭐ Ключевые игроки: Винисиус, Левандовски',
-            prediction: 'Тотал больше 2.5 (1.80)',
-            remaining: 1
-        }
-    };
+// ============================================================
+// ФИЛЬТРАЦИЯ
+// ============================================================
+function getFilteredMatches() {
+    const allMatches = [];
+    Object.keys(matchesData).forEach(date => {
+        matchesData[date].forEach(match => {
+            allMatches.push({ ...match, date });
+        });
+    });
     
-    const data = analyses[matchId];
-    if (data) return data;
+    let filtered = allMatches;
     
-    return {
-        home_team: 'Команда 1',
-        away_team: 'Команда 2',
-        league: 'Лига',
-        date: '2026-06-30',
-        rating: 4.0,
-        analysis: '📊 Анализ матча в разработке...',
-        prediction: 'Ожидайте прогноз',
-        remaining: 1
-    };
+    if (state.leagueFilter !== 'all') {
+        filtered = filtered.filter(m => m.league === state.leagueFilter);
+    }
+    
+    // timeFilter пока не реализован — оставляем все
+    return filtered;
 }
 
 // ============================================================
-// ОТРИСОВКА
+// ОТРИСОВКА МАТЧЕЙ
 // ============================================================
-async function renderMain() {
-    document.getElementById('screen-main').classList.remove('hidden');
-    document.getElementById('screen-matches').classList.add('hidden');
-    document.getElementById('screen-analysis').classList.add('hidden');
+function renderMatches() {
+    const container = document.getElementById('matchesList');
+    const filtered = getFilteredMatches();
     
-    const data = await fetchLeagues();
-    state.analyticsUsed = data.analytics_used || 0;
-    state.freeLimit = data.free_limit || 3;
-    state.leagues = data.leagues || [];
-    
-    const used = state.analyticsUsed;
-    const total = state.freeLimit;
-    document.getElementById('progressFill').style.width = Math.min((used / total) * 100, 100) + '%';
-    document.getElementById('statsText').textContent = `${used} / ${total}`;
-    
-    const grid = document.getElementById('leagueGrid');
-    if (state.leagues.length === 0) {
-        grid.innerHTML = '<div class="loading">Нет доступных лиг</div>';
+    if (filtered.length === 0) {
+        container.innerHTML = '<div class="loading">Нет матчей по выбранным фильтрам</div>';
         return;
     }
     
-    grid.innerHTML = state.leagues.map(league => `
-        <div class="league-card" onclick="selectLeague('${league.name}')">
-            <span class="emoji">${league.emoji || '🏆'}</span>
-            <div class="name">${league.name}</div>
-            <div class="count">${league.count || 0} матчей</div>
-        </div>
-    `).join('');
+    // Группировка по датам
+    const grouped = {};
+    filtered.forEach(match => {
+        if (!grouped[match.date]) grouped[match.date] = [];
+        grouped[match.date].push(match);
+    });
+    
+    let html = '';
+    Object.keys(grouped).sort().forEach(date => {
+        const formattedDate = date.replace(/-/g, '.');
+        html += `<div class="match-day-group">`;
+        html += `<div class="match-day-date">${formattedDate}</div>`;
+        
+        grouped[date].forEach(match => {
+            html += `
+                <div class="match-item" onclick="openAnalysis(${match.id})">
+                    <div class="tournament">${match.tournament}</div>
+                    <div class="teams">
+                        <span>${match.home}</span>
+                        <span style="color:#6a6a7a;">vs</span>
+                        <span>${match.away}</span>
+                    </div>
+                    <div class="time">⏰ ${match.time}</div>
+                    <span class="ai-badge">🧠 AI</span>
+                </div>
+            `;
+        });
+        
+        html += `</div>`;
+    });
+    
+    container.innerHTML = html;
 }
 
-async function selectLeague(leagueName) {
-    state.currentLeague = leagueName;
-    document.getElementById('screen-main').classList.add('hidden');
-    document.getElementById('screen-matches').classList.remove('hidden');
-    document.getElementById('screen-analysis').classList.add('hidden');
-    
-    document.getElementById('matchesTitle').textContent = `📋 ${leagueName}`;
-    
-    const list = document.getElementById('matchesList');
-    list.innerHTML = '<div class="loading">Загрузка матчей<span class="loading-dots"></span></div>';
-    
-    const data = await fetchMatches(leagueName);
-    state.matches = data.matches || [];
-    
-    if (state.matches.length === 0) {
-        list.innerHTML = '<div class="loading">Нет матчей в этой лиге</div>';
+// ============================================================
+// ФИЛЬТРЫ
+// ============================================================
+document.querySelectorAll('#leagueFilters .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#leagueFilters .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.leagueFilter = btn.dataset.filter;
+        renderMatches();
+    });
+});
+
+document.querySelectorAll('#timeFilters .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('#timeFilters .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.timeFilter = btn.dataset.filter;
+        renderMatches();
+    });
+});
+
+// ============================================================
+// ОТКРЫТИЕ АНАЛИЗА
+// ============================================================
+function openAnalysis(matchId) {
+    state.currentMatchId = matchId;
+    const data = analysisData[matchId];
+    if (!data) {
+        // Если нет данных — показываем заглушку с тарифами
+        showTariffsOnly();
         return;
     }
     
-    list.innerHTML = state.matches.map(match => `
-        <div class="match-card" onclick="selectMatch(${match.id})">
-            <div class="match-teams">
-                <span>${match.home_team}</span>
-                <span class="match-vs">vs</span>
-                <span>${match.away_team}</span>
-            </div>
-            <div class="match-info">
-                <span>📅 ${match.date || 'Дата неизвестна'}</span>
-                <span>⭐ ${match.rating || '—'}</span>
-            </div>
-        </div>
-    `).join('');
-}
-
-async function selectMatch(matchId) {
-    document.getElementById('screen-main').classList.add('hidden');
     document.getElementById('screen-matches').classList.add('hidden');
     document.getElementById('screen-analysis').classList.remove('hidden');
     
     const content = document.getElementById('analysisContent');
-    content.innerHTML = '<div class="loading">Анализируем матч<span class="loading-dots"></span></div>';
-    
-    const data = await fetchAnalysis(matchId);
     const stars = '⭐'.repeat(Math.floor(data.rating || 0)) + '☆'.repeat(5 - Math.floor(data.rating || 0));
     
     content.innerHTML = `
         <div class="analysis-card">
-            <div class="analysis-title">⚽ ${data.home_team} vs ${data.away_team}</div>
-            <div class="analysis-meta">${data.league} · ${data.date} · ${stars}</div>
+            <div class="analysis-title">⚽ ${data.home} vs ${data.away}</div>
+            <div class="analysis-meta">${data.tournament} · ${stars}</div>
             <div class="analysis-text">${(data.analysis || '').replace(/\n/g, '<br>')}</div>
             <div class="analysis-prediction">📈 ${data.prediction}</div>
-            ${data.remaining !== undefined ? `
-                <div style="margin-top:12px;text-align:center;font-size:14px;color:#6a6a7a;">
-                    🎁 Осталось бесплатных: ${data.remaining}
-                </div>
-            ` : ''}
         </div>
-        <button class="btn-back" onclick="selectLeague('${state.currentLeague}')">← Назад к матчам</button>
+        ${renderTariffs()}
+        <button class="btn-back" onclick="backToMatches()" style="width:100%;padding:12px;background:#14141f;border:1px solid #1e1e32;border-radius:12px;font-size:16px;cursor:pointer;color:#ffffff;">
+            ← Назад к матчам
+        </button>
     `;
 }
 
 // ============================================================
-// НАВИГАЦИЯ
+// ТАРИФЫ
 // ============================================================
-document.getElementById('backToLeagues').addEventListener('click', renderMain);
-document.getElementById('backToMatches').addEventListener('click', () => {
-    if (state.currentLeague) selectLeague(state.currentLeague);
-    else renderMain();
-});
+function renderTariffs() {
+    return `
+        <div class="tariffs-section">
+            <div class="tariff-card">
+                <div class="tariff-name">Pro</div>
+                <div class="tariff-price">5 990 ₽<span class="period">/мес</span></div>
+                <ul class="tariff-features">
+                    <li>5–7 прогнозов в день</li>
+                    <li>Основные матчи топ-лиг</li>
+                    <li>Одиночные ставки с рабочими коэффициентами</li>
+                    <li>Краткая аналитика матчей</li>
+                    <li>Оптимальные варианты из линии букмекеров</li>
+                    <li>Стабильная игровая стратегия</li>
+                    <li>Подходит для спокойного роста банка</li>
+                    <li>Приоритетные ставки дня</li>
+                </ul>
+                <button class="tariff-btn pro" onclick="tg.openTelegramLink('https://t.me/poland5692')">
+                    💳 Оформить Pro
+                </button>
+            </div>
+            
+            <div class="tariff-card popular">
+                <div class="tariff-name">MAX</div>
+                <div class="tariff-price">14 990 ₽<span class="period">/мес</span></div>
+                <ul class="tariff-features">
+                    <li>Всё, что в Pro</li>
+                    <li>Быстрые уведомления о лучших коэффициентах</li>
+                    <li>Доступ к самым сильным сигналам</li>
+                    <li>Приоритетная поддержка 24/7</li>
+                    <li>Эксклюзивные матчи и турниры</li>
+                </ul>
+                <button class="tariff-btn max" onclick="tg.openTelegramLink('https://t.me/poland5692')">
+                    💎 Оформить MAX
+                </button>
+            </div>
+            
+            <div class="tariff-note">
+                ⚡ Автопродление. Отмена в любой момент.<br>
+                Прогнозы — аналитика, не гарантия результата.
+            </div>
+        </div>
+    `;
+}
 
+function showTariffsOnly() {
+    document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-analysis').classList.remove('hidden');
+    
+    const content = document.getElementById('analysisContent');
+    content.innerHTML = `
+        <div style="text-align:center;padding:20px 0;color:#6a6a7a;">
+            <div style="font-size:48px;margin-bottom:12px;">🧠</div>
+            <div style="font-size:18px;font-weight:700;color:#ffffff;">Анализ матча</div>
+            <div style="font-size:14px;">Разбор доступен по подписке</div>
+        </div>
+        ${renderTariffs()}
+        <button class="btn-back" onclick="backToMatches()" style="width:100%;padding:12px;background:#14141f;border:1px solid #1e1e32;border-radius:12px;font-size:16px;cursor:pointer;color:#ffffff;">
+            ← Назад к матчам
+        </button>
+    `;
+}
+
+// ============================================================
+// НАЗАД
+// ============================================================
+function backToMatches() {
+    document.getElementById('screen-matches').classList.remove('hidden');
+    document.getElementById('screen-analysis').classList.add('hidden');
+}
+
+document.getElementById('backToMatches').addEventListener('click', backToMatches);
+
+// ============================================================
+// НИЖНЯЯ НАВИГАЦИЯ
+// ============================================================
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
-        const screen = item.dataset.screen;
-        if (screen === 'main') renderMain();
-        else if (screen === 'tariffs') showTariffs();
-        else if (screen === 'profile') showProfile();
+        
+        const tab = item.dataset.tab;
+        if (tab === 'matches') {
+            backToMatches();
+        } else if (tab === 'analysis') {
+            // Показываем все разборы
+            showAllAnalysis();
+        } else if (tab === 'express') {
+            showExpress();
+        }
     });
 });
 
 // ============================================================
-// ТАРИФЫ И ПРОФИЛЬ
+// ВСЕ РАЗБОРЫ
 // ============================================================
-function showTariffs() {
-    document.getElementById('leagueGrid').innerHTML = `
-        <div style="grid-column:1/-1;">
-            <div class="analysis-card">
-                <div style="text-align:center;font-size:28px;margin-bottom:8px;">💎</div>
-                <div style="text-align:center;font-size:20px;font-weight:700;color:#ffffff;">Премиум-доступ</div>
-                <div style="text-align:center;color:#6a6a7a;margin-bottom:16px;">Неограниченные ИИ-анализы</div>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-                    <div style="background:#1a1a2e;border-radius:8px;padding:12px;text-align:center;">
-                        <div style="font-weight:700;color:#ffffff;">1 мес</div>
-                        <div style="color:#667eea;font-weight:700;">499 ₽</div>
-                    </div>
-                    <div style="background:#1a1a2e;border-radius:8px;padding:12px;text-align:center;border:2px solid #667eea;">
-                        <div style="font-weight:700;color:#ffffff;">3 мес</div>
-                        <div style="color:#667eea;font-weight:700;">999 ₽</div>
-                        <div style="font-size:10px;color:#667eea;">🔥 Выгодно!</div>
-                    </div>
-                    <div style="background:#1a1a2e;border-radius:8px;padding:12px;text-align:center;">
-                        <div style="font-weight:700;color:#ffffff;">12 мес</div>
-                        <div style="color:#667eea;font-weight:700;">2999 ₽</div>
-                    </div>
+function showAllAnalysis() {
+    document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-analysis').classList.remove('hidden');
+    
+    const content = document.getElementById('analysisContent');
+    const allKeys = Object.keys(analysisData);
+    
+    if (allKeys.length === 0) {
+        content.innerHTML = '<div class="loading">Нет доступных разборов</div>';
+        return;
+    }
+    
+    let html = '<div style="margin-bottom:12px;font-size:18px;font-weight:700;">🧠 Все разборы</div>';
+    
+    allKeys.forEach(key => {
+        const data = analysisData[key];
+        html += `
+            <div class="match-item" onclick="openAnalysis(${key})">
+                <div class="tournament">${data.tournament}</div>
+                <div class="teams">
+                    <span>${data.home}</span>
+                    <span style="color:#6a6a7a;">vs</span>
+                    <span>${data.away}</span>
                 </div>
-                <button onclick="tg.openTelegramLink('https://t.me/poland5692')" style="width:100%;margin-top:12px;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;">
-                    💳 Оформить подписку
-                </button>
+                <div style="margin-top:4px;display:flex;gap:8px;">
+                    <span class="ai-badge">⭐ ${data.rating}</span>
+                    <span class="ai-badge">🧠 AI</span>
+                </div>
             </div>
-            <button class="btn-back" onclick="renderMain()">← Назад</button>
-        </div>
-    `;
+        `;
+    });
+    
+    html += `<button class="btn-back" onclick="backToMatches()" style="width:100%;padding:12px;background:#14141f;border:1px solid #1e1e32;border-radius:12px;font-size:16px;cursor:pointer;color:#ffffff;">← Назад</button>`;
+    content.innerHTML = html;
 }
 
-function showProfile() {
-    document.getElementById('leagueGrid').innerHTML = `
-        <div style="grid-column:1/-1;">
-            <div class="analysis-card">
-                <div style="text-align:center;font-size:48px;margin-bottom:8px;">👤</div>
-                <div style="text-align:center;font-size:20px;font-weight:700;color:#ffffff;">${user.first_name}</div>
-                <div style="text-align:center;color:#6a6a7a;font-size:14px;">ID: ${user.id}</div>
-                <div style="margin-top:16px;padding:12px;background:#1a1a2e;border-radius:8px;">
-                    <div style="display:flex;justify-content:space-between;color:#b0b0b8;">
-                        <span>🎁 Использовано:</span>
-                        <span><b style="color:#ffffff;">${state.analyticsUsed} / ${state.freeLimit}</b></span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;margin-top:8px;color:#b0b0b8;">
-                        <span>💎 Подписка:</span>
-                        <span><b style="color:${state.analyticsUsed >= state.freeLimit ? '#ff6b6b' : '#51cf66'};">${state.analyticsUsed >= state.freeLimit ? '🔴 Неактивна' : '🟢 Активна'}</b></span>
-                    </div>
+// ============================================================
+// ЭКСПРЕСС
+// ============================================================
+function showExpress() {
+    document.getElementById('screen-matches').classList.add('hidden');
+    document.getElementById('screen-analysis').classList.remove('hidden');
+    
+    const content = document.getElementById('analysisContent');
+    content.innerHTML = `
+        <div class="analysis-card" style="text-align:center;">
+            <div style="font-size:48px;margin-bottom:12px;">⚡</div>
+            <div style="font-size:20px;font-weight:700;margin-bottom:8px;">Экспресс дня</div>
+            <div style="color:#6a6a7a;margin-bottom:16px;">3 события с коэффициентом 4.85</div>
+            <div style="text-align:left;padding:12px;background:#0a0a0f;border-radius:8px;margin-bottom:12px;">
+                <div style="display:flex;justify-content:space-between;padding:4px 0;">
+                    <span>⚽ Ливерпуль vs Реал Мадрид</span>
+                    <span style="color:#4ade80;">1.85</span>
                 </div>
-                <button onclick="tg.close()" style="width:100%;margin-top:12px;padding:12px;background:#ff6b6b;color:white;border:none;border-radius:12px;font-size:16px;cursor:pointer;">
-                    🚪 Закрыть
-                </button>
+                <div style="display:flex;justify-content:space-between;padding:4px 0;">
+                    <span>⚽ Манчестер Сити vs Челси</span>
+                    <span style="color:#4ade80;">1.75</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:4px 0;">
+                    <span>⚽ Атлетик vs Морнар</span>
+                    <span style="color:#4ade80;">1.55</span>
+                </div>
             </div>
-            <button class="btn-back" onclick="renderMain()">← Назад</button>
+            <div style="font-size:24px;font-weight:700;margin-bottom:12px;">Общий: 4.85</div>
+            <button onclick="tg.openTelegramLink('https://t.me/poland5692')" style="width:100%;padding:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;">
+                📥 Собрать экспресс
+            </button>
         </div>
+        <button class="btn-back" onclick="backToMatches()" style="width:100%;padding:12px;background:#14141f;border:1px solid #1e1e32;border-radius:12px;font-size:16px;cursor:pointer;color:#ffffff;">← Назад</button>
     `;
 }
 
 // ============================================================
 // ЗАПУСК
 // ============================================================
-document.getElementById('screen-onboarding').classList.remove('hidden');
-document.getElementById('screen-main').classList.add('hidden');
+renderMatches();
