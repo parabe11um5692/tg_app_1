@@ -35,7 +35,8 @@ function finishOnboarding() {
     sessionStorage.setItem('uzarrai_onboarding_seen', 'true');
     document.getElementById('screen-onboarding').classList.add('hidden');
     document.getElementById('screen-matches').classList.remove('hidden');
-    renderMatches();
+    initMatchDaySlider();
+    renderTournamentSections();
 }
 
 function skipOnboarding() { finishOnboarding(); }
@@ -44,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hasSeenOnboarding) {
         document.getElementById('screen-onboarding').classList.add('hidden');
         document.getElementById('screen-matches').classList.remove('hidden');
-        renderMatches();
+        initMatchDaySlider();
+        renderTournamentSections();
         return;
     }
     document.getElementById('screen-onboarding').classList.remove('hidden');
@@ -73,195 +75,202 @@ document.addEventListener('touchend', (e) => {
 // СОСТОЯНИЕ
 // ============================================================
 const state = {
-    leagueFilter: 'all',
-    timeFilter: 'all',
-    currentTournament: 'world',
     currentTariffContext: 'match'
 };
 
 // ============================================================
-// ДАННЫЕ
+// МАТЧ ДНЯ (СЛАЙДЕР)
 // ============================================================
-const matchesData = {
-    '2026-07-08': [
-        { id: 1, home: 'Атлетик Клуб д\'Ескалдес', away: 'Морнар', time: '17:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
-        { id: 2, home: 'Алашкерт', away: 'Елимай Семей', time: '19:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
-        { id: 3, home: 'ФК Лиепаджа', away: 'Деҫис', time: '19:00 МСК', tournament: 'Лига Конференций', league: 'conference' },
-        { id: 4, home: 'Ливерпуль', away: 'Реал Мадрид', time: '22:00 МСК', tournament: 'Лига Чемпионов', league: 'champions' },
-        { id: 5, home: 'Бавария', away: 'ПСЖ', time: '22:00 МСК', tournament: 'Лига Чемпионов', league: 'champions' }
-    ],
-    '2026-07-09': [
-        { id: 6, home: 'Манчестер Сити', away: 'Челси', time: '19:00 МСК', tournament: 'АПЛ', league: 'apl' },
-        { id: 7, home: 'Арсенал', away: 'Тоттенхэм', time: '22:00 МСК', tournament: 'АПЛ', league: 'apl' },
-        { id: 8, home: 'Барселона', away: 'Реал Бетис', time: '21:00 МСК', tournament: 'Ла Лига', league: 'laliga' },
-        { id: 9, home: 'Милан', away: 'Интер', time: '20:00 МСК', tournament: 'Серия А', league: 'seriea' },
-        { id: 10, home: 'Боруссия Дортмунд', away: 'Лейпциг', time: '18:00 МСК', tournament: 'Бундес-Лига', league: 'bundesliga' }
-    ],
-    '2026-07-10': [
-        { id: 11, home: 'Ювентус', away: 'Наполи', time: '19:00 МСК', tournament: 'Серия А', league: 'seriea' },
-        { id: 12, home: 'Аякс', away: 'Рома', time: '21:00 МСК', tournament: 'Лига Европы', league: 'europa' }
-    ]
-};
-
-// Данные для вкладки AI (разобранные матчи)
-const aiMatches = [
-    { home: 'Франция', away: 'Марокко', tournament: 'Чемпионат мира 2026', time: '23:00 МСК', badge: '70% AI' },
-    { home: 'Карабаг', away: 'Морнар', tournament: 'Лига Европы', time: '19:00 МСК', badge: 'AI' },
-    { home: 'Алашкерт', away: 'Елимай Семей', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' },
-    { home: 'ФК Лиепаджа', away: 'Деҫис', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' },
-    { home: 'Дила', away: 'Виртус', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' },
-    { home: 'Хегелманн Литауен', away: 'Паиде', tournament: 'Лига Конференций', time: '19:00 МСК', badge: 'AI' }
+const matchDayData = [
+    {
+        home: 'Франция',
+        away: 'Марокко',
+        flagHome: '🇫🇷',
+        flagAway: '🇲🇦',
+        starsHome: '★★★★★',
+        starsAway: '★★★★☆',
+        tournament: 'ЧЕМПИОНАТ МИРА 2026 · 1/4 ФИНАЛА',
+        favorite: 'Франция',
+        percent: '60%',
+        p1: '60%',
+        px: '25%',
+        p2: '15%',
+        time: 'Завтра, 23:00 МСК · через 24 ч',
+        matchId: 4
+    },
+    {
+        home: 'Ливерпуль',
+        away: 'Реал Мадрид',
+        flagHome: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        flagAway: '🇪🇸',
+        starsHome: '★★★★★',
+        starsAway: '★★★★★',
+        tournament: 'ЛИГА ЧЕМПИОНОВ · ФИНАЛ',
+        favorite: 'Ливерпуль',
+        percent: '52%',
+        p1: '52%',
+        px: '28%',
+        p2: '20%',
+        time: 'Завтра, 22:00 МСК · через 23 ч',
+        matchId: 5
+    },
+    {
+        home: 'Бавария',
+        away: 'ПСЖ',
+        flagHome: '🇩🇪',
+        flagAway: '🇫🇷',
+        starsHome: '★★★★☆',
+        starsAway: '★★★★☆',
+        tournament: 'ЛИГА ЧЕМПИОНОВ · 1/2 ФИНАЛА',
+        favorite: 'Бавария',
+        percent: '55%',
+        p1: '55%',
+        px: '25%',
+        p2: '20%',
+        time: 'Послезавтра, 22:00 МСК · через 47 ч',
+        matchId: 6
+    }
 ];
 
-// ============================================================
-// ФИЛЬТРАЦИЯ МАТЧЕЙ
-// ============================================================
-function getFilteredMatches() {
-    const allMatches = [];
-    Object.keys(matchesData).forEach(date => {
-        matchesData[date].forEach(match => {
-            allMatches.push({ ...match, date });
-        });
-    });
-    let filtered = allMatches;
-    if (state.leagueFilter !== 'all') {
-        filtered = filtered.filter(m => m.league === state.leagueFilter);
-    }
-    // Фильтр по времени (заглушка)
-    return filtered;
-}
+let sliderIndex = 0;
 
-// ============================================================
-// ОТРИСОВКА МАТЧЕЙ
-// ============================================================
-function renderMatches() {
-    const container = document.getElementById('matchesList');
-    const filtered = getFilteredMatches();
+function initMatchDaySlider() {
+    const track = document.getElementById('matchDayTrack');
+    if (!track) return;
     
-    if (filtered.length === 0) {
-        container.innerHTML = '<div class="loading">Нет матчей по выбранным фильтрам</div>';
-        return;
-    }
-    
-    const grouped = {};
-    filtered.forEach(match => {
-        if (!grouped[match.date]) grouped[match.date] = [];
-        grouped[match.date].push(match);
-    });
-    
-    let html = '';
-    Object.keys(grouped).sort().forEach(date => {
-        const formattedDate = date.replace(/-/g, '.');
-        html += `<div class="match-day-group">`;
-        html += `<div class="match-day-date">${formattedDate}</div>`;
-        grouped[date].forEach(match => {
-            html += `
-                <div class="match-item" onclick="openTariffsForMatch(${match.id})">
-                    <div class="tournament">${match.tournament}</div>
-                    <div class="teams">
-                        <span>${match.home}</span>
-                        <span style="color:#6a6a7a;">vs</span>
-                        <span>${match.away}</span>
-                    </div>
-                    <div class="time">⏰ ${match.time}</div>
-                    <span class="ai-badge">🧠 AI</span>
+    track.innerHTML = matchDayData.map((match, index) => `
+        <div class="match-day-card" onclick="openTariffsForMatch(${match.matchId})">
+            <div class="match-day-badge">🔥 МАТЧ ДНЯ</div>
+            <div class="match-day-tournament">${match.tournament}</div>
+            <div class="match-day-teams">
+                <div class="match-day-team">
+                    <span class="team-flag">${match.flagHome}</span>
+                    <span class="team-name">${match.home}</span>
+                    <span class="team-stars">${match.starsHome}</span>
                 </div>
-            `;
-        });
-        html += `</div>`;
-    });
-    
-    container.innerHTML = html;
-}
-
-// ============================================================
-// ОТРИСОВКА ВКЛАДКИ AI
-// ============================================================
-function renderAIMatches() {
-    const container = document.getElementById('aiMatchesList');
-    if (!container) return;
-    
-    if (aiMatches.length === 0) {
-        container.innerHTML = '<div class="loading">Нет разобранных матчей</div>';
-        return;
-    }
-    
-    let html = '';
-    aiMatches.forEach(match => {
-        html += `
-            <div class="ai-match-card" onclick="openTariffsForAI()">
-                <div class="left">
-                    <div class="tournament">${match.tournament}</div>
-                    <div class="teams">${match.home} vs ${match.away}</div>
-                </div>
-                <div class="right">
-                    <div class="time">${match.time}</div>
-                    <div class="badge">${match.badge}</div>
+                <span class="match-day-vs">VS</span>
+                <div class="match-day-team">
+                    <span class="team-flag">${match.flagAway}</span>
+                    <span class="team-name">${match.away}</span>
+                    <span class="team-stars">${match.starsAway}</span>
                 </div>
             </div>
-        `;
+            <div class="match-day-favorite">
+                <span>Фаворит — <b>${match.favorite}</b></span>
+                <span class="favorite-percent">${match.percent}</span>
+            </div>
+            <div class="match-day-probability">
+                <div class="prob-item">
+                    <span class="prob-label">П1</span>
+                    <span class="prob-value">${match.p1}</span>
+                </div>
+                <div class="prob-item">
+                    <span class="prob-label">X</span>
+                    <span class="prob-value">${match.px}</span>
+                </div>
+                <div class="prob-item">
+                    <span class="prob-label">П2</span>
+                    <span class="prob-value">${match.p2}</span>
+                </div>
+            </div>
+            <div class="match-day-time">⏰ ${match.time}</div>
+            <button class="match-day-btn">📊 Открыть прогноз →</button>
+        </div>
+    `).join('');
+    
+    updateSlider();
+    
+    // Кнопки
+    document.getElementById('sliderPrev').addEventListener('click', () => {
+        if (sliderIndex > 0) { sliderIndex--; updateSlider(); }
+    });
+    document.getElementById('sliderNext').addEventListener('click', () => {
+        if (sliderIndex < matchDayData.length - 1) { sliderIndex++; updateSlider(); }
     });
     
-    container.innerHTML = html;
+    // Точки
+    const dotsContainer = document.getElementById('sliderDots');
+    dotsContainer.innerHTML = matchDayData.map((_, i) => `
+        <span class="slider-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>
+    `).join('');
+    dotsContainer.querySelectorAll('.slider-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+            sliderIndex = parseInt(dot.dataset.index);
+            updateSlider();
+        });
+    });
+}
+
+function updateSlider() {
+    const track = document.getElementById('matchDayTrack');
+    track.style.transform = `translateX(-${sliderIndex * 100}%)`;
+    
+    document.querySelectorAll('.slider-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === sliderIndex);
+    });
 }
 
 // ============================================================
-// ФИЛЬТРЫ
+// ТУРНИРНЫЕ СЕКЦИИ
 // ============================================================
-document.querySelectorAll('#leagueFilters .filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('#leagueFilters .filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.leagueFilter = btn.dataset.filter;
-        renderMatches();
-    });
-});
+const tournamentSectionsData = [
+    {
+        title: '🏆 Чемпионат мира',
+        matches: [
+            { home: 'Франция', away: 'Марокко', time: '23:00', matchId: 4 },
+            { home: 'Бразилия', away: 'Аргентина', time: '22:00', matchId: 7 }
+        ]
+    },
+    {
+        title: '🏆 Лига Европы',
+        matches: [
+            { home: 'Карабаг', away: 'Морнар', time: '19:00', matchId: 8 },
+            { home: 'Аякс', away: 'Рома', time: '21:00', matchId: 9 }
+        ]
+    },
+    {
+        title: '🏆 Лига Кубка',
+        matches: [
+            { home: 'Алашкерт', away: 'Елимай Семей', time: '19:00', matchId: 2 },
+            { home: 'ФК Лиепаджа', away: 'Деҫис', time: '19:00', matchId: 3 }
+        ]
+    }
+];
 
-document.querySelectorAll('#timeFilters .filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('#timeFilters .filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.timeFilter = btn.dataset.filter;
-        renderMatches();
-    });
-});
+function renderTournamentSections() {
+    const container = document.getElementById('tournamentSections');
+    if (!container) return;
+    
+    container.innerHTML = tournamentSectionsData.map(section => `
+        <div class="tournament-section">
+            <div class="tournament-section-title">${section.title}</div>
+            <div class="tournament-section-sub">Матчи · AI</div>
+            <div class="tournament-section-matches">
+                ${section.matches.map(match => `
+                    <div class="tournament-match" onclick="openTariffsForMatch(${match.matchId})">
+                        <span class="teams">${match.home} vs ${match.away}</span>
+                        <span class="time">${match.time}</span>
+                        <span class="badge">🧠 AI</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+}
 
 // ============================================================
-// ТУРНИРЫ (СЛАЙДЕР)
-// ============================================================
-document.querySelectorAll('.tournament-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.tournament-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        state.currentTournament = btn.dataset.tournament;
-        // Здесь можно фильтровать матчи по турниру
-        renderMatches();
-    });
-});
-
-// ============================================================
-// ОТКРЫТИЕ ТАРИФОВ
+// ТАРИФЫ (СЛАЙДЕР)
 // ============================================================
 function openTariffsForMatch(matchId) {
     state.currentTariffContext = 'match';
     document.getElementById('screen-matches').classList.add('hidden');
-    document.getElementById('screen-ai').classList.add('hidden');
     document.getElementById('screen-tariffs').classList.remove('hidden');
     renderTariffsSlider('tariffsContent', '🔓 Открой прогноз');
-}
-
-function openTariffsForAI() {
-    state.currentTariffContext = 'ai';
-    document.getElementById('screen-matches').classList.add('hidden');
-    document.getElementById('screen-ai').classList.add('hidden');
-    document.getElementById('screen-tariffs').classList.remove('hidden');
-    renderTariffsSlider('tariffsContent', '🧠 AI-разбор доступен по подписке');
 }
 
 function openTariffsForExpress() {
     state.currentTariffContext = 'express';
     document.getElementById('screen-matches').classList.add('hidden');
-    document.getElementById('screen-ai').classList.add('hidden');
     document.getElementById('screen-tariffs').classList.remove('hidden');
     renderTariffsSlider('tariffsContent', '⚡ Экспресс-доступ');
 }
@@ -277,8 +286,6 @@ function backFromTariffs() {
     document.getElementById('screen-tariffs').classList.add('hidden');
     if (state.currentTariffContext === 'profile') {
         document.getElementById('screen-profile').classList.remove('hidden');
-    } else if (state.currentTariffContext === 'ai') {
-        document.getElementById('screen-ai').classList.remove('hidden');
     } else {
         document.getElementById('screen-matches').classList.remove('hidden');
     }
@@ -306,6 +313,8 @@ function renderTariffsSlider(containerId, title) {
                     <li>Краткая аналитика матчей</li>
                     <li>Оптимальные варианты из линии букмекеров</li>
                     <li>Стабильная игровая стратегия</li>
+                    <li>Подходит для спокойного роста банка</li>
+                    <li>Приоритетные ставки дня</li>
                 </ul>
                 <button class="tariff-btn pro" onclick="tg.openTelegramLink('https://t.me/poland5692')">
                     💳 Оформить Pro
@@ -340,19 +349,8 @@ function renderTariffsSlider(containerId, title) {
 // ============================================================
 document.getElementById('profileBtn').addEventListener('click', () => {
     document.getElementById('screen-matches').classList.add('hidden');
-    document.getElementById('screen-ai').classList.add('hidden');
     document.getElementById('screen-profile').classList.remove('hidden');
 });
-
-// Для AI тоже нужна кнопка профиля
-const profileBtnAI = document.getElementById('profileBtnAI');
-if (profileBtnAI) {
-    profileBtnAI.addEventListener('click', () => {
-        document.getElementById('screen-matches').classList.add('hidden');
-        document.getElementById('screen-ai').classList.add('hidden');
-        document.getElementById('screen-profile').classList.remove('hidden');
-    });
-}
 
 document.getElementById('backFromProfile').addEventListener('click', () => {
     document.getElementById('screen-profile').classList.add('hidden');
@@ -377,7 +375,7 @@ function toggleTheme() {
         status.textContent = 'светлая';
         document.body.style.background = '#ffffff';
         document.body.style.color = '#000000';
-        document.querySelectorAll('.match-item, .match-day-card, .ai-match-card, .tariff-card-slide, .profile-plan, .stats-card')
+        document.querySelectorAll('.match-item, .match-day-card, .tournament-section, .tariff-card-slide, .profile-plan')
             .forEach(el => {
                 if (el) {
                     el.style.background = '#f5f5f5';
@@ -388,7 +386,7 @@ function toggleTheme() {
         status.textContent = 'тёмная';
         document.body.style.background = '#0a0a0f';
         document.body.style.color = '#ffffff';
-        document.querySelectorAll('.match-item, .match-day-card, .ai-match-card, .tariff-card-slide, .profile-plan, .stats-card')
+        document.querySelectorAll('.match-item, .match-day-card, .tournament-section, .tariff-card-slide, .profile-plan')
             .forEach(el => {
                 if (el) {
                     el.style.background = '#14141f';
@@ -414,14 +412,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
         if (tab === 'matches') {
             document.getElementById('screen-tariffs').classList.add('hidden');
             document.getElementById('screen-profile').classList.add('hidden');
-            document.getElementById('screen-ai').classList.add('hidden');
             document.getElementById('screen-matches').classList.remove('hidden');
-        } else if (tab === 'ai') {
-            document.getElementById('screen-tariffs').classList.add('hidden');
-            document.getElementById('screen-profile').classList.add('hidden');
-            document.getElementById('screen-matches').classList.add('hidden');
-            document.getElementById('screen-ai').classList.remove('hidden');
-            renderAIMatches();
         } else if (tab === 'express') {
             openTariffsForExpress();
         }

@@ -22,9 +22,7 @@
     text-align: center;
     animation: fadeIn 0.5s ease;
 }
-.onboarding-slide.active {
-    display: flex;
-}
+.onboarding-slide.active { display: flex; }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -132,16 +130,25 @@ body {
 .header-profile-btn:hover { background: #1a1a2e; }
 
 /* ============================================
-   МАТЧ ДНЯ
+   МАТЧ ДНЯ (СЛАЙДЕР)
    ============================================ */
+.match-day-slider {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    margin-bottom: 12px;
+}
+.match-day-track {
+    display: flex;
+    transition: transform 0.4s ease;
+}
 .match-day-card {
+    min-width: 100%;
     background: linear-gradient(145deg, #14141f, #1a1a2e);
     border-radius: 20px;
     padding: 20px;
-    margin-bottom: 20px;
     border: 1px solid #2a2a4a;
     cursor: pointer;
-    transition: transform 0.2s;
 }
 .match-day-card:active { transform: scale(0.98); }
 .match-day-badge {
@@ -174,7 +181,7 @@ body {
     align-items: center;
     gap: 4px;
 }
-.team-flag { font-size: 28px; }
+.team-flag { font-size: 32px; }
 .team-name { font-size: 18px; font-weight: 700; }
 .team-stars { font-size: 14px; color: #ffd700; }
 .match-day-vs {
@@ -182,6 +189,31 @@ body {
     font-weight: 700;
     font-size: 14px;
 }
+.match-day-favorite {
+    display: flex;
+    justify-content: space-between;
+    background: #0a0a0f;
+    padding: 8px 14px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+.favorite-percent { color: #4ade80; font-weight: 700; }
+.match-day-probability {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 12px;
+    gap: 8px;
+}
+.prob-item {
+    flex: 1;
+    text-align: center;
+    background: #0a0a0f;
+    padding: 6px 0;
+    border-radius: 8px;
+}
+.prob-label { font-size: 12px; color: #6a6a7a; display: block; }
+.prob-value { font-size: 16px; font-weight: 700; color: #ffffff; }
 .match-day-time {
     font-size: 13px;
     color: #6a6a7a;
@@ -202,157 +234,97 @@ body {
 }
 .match-day-btn:active { opacity: 0.8; }
 
-/* ============================================
-   ТУРНИРЫ (СЛАЙДЕР)
-   ============================================ */
-.tournaments-slider {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
-    scrollbar-width: none;
-}
-.tournaments-slider::-webkit-scrollbar { display: none; }
-.tournament-btn {
-    flex-shrink: 0;
-    padding: 8px 16px;
-    background: #14141f;
-    border: 1px solid #1e1e32;
-    border-radius: 20px;
-    color: #6a6a7a;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.3s;
-    white-space: nowrap;
-}
-.tournament-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.6);
+    border: none;
     color: white;
-    border-color: transparent;
+    font-size: 24px;
+    padding: 8px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
 }
+.slider-btn:hover { background: rgba(0,0,0,0.8); }
+.slider-btn.prev { left: 8px; }
+.slider-btn.next { right: 8px; }
 
-/* ============================================
-   ФИЛЬТРЫ
-   ============================================ */
-.filter-row {
+.slider-dots {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     gap: 8px;
     margin-bottom: 16px;
 }
-.filter-tabs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-.filter-btn {
-    padding: 6px 16px;
-    background: #14141f;
-    border: 1px solid #1e1e32;
-    border-radius: 20px;
-    color: #6a6a7a;
-    font-size: 13px;
+.slider-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2a2a3a;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: background 0.3s;
 }
-.filter-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-color: transparent;
-}
+.slider-dot.active { background: #667eea; }
 
 /* ============================================
-   МАТЧИ (СПИСОК)
+   ТУРНИРНЫЕ СЕКЦИИ
    ============================================ */
-.match-day-group { margin-bottom: 16px; }
-.match-day-date {
-    font-size: 14px;
-    font-weight: 600;
-    color: #6a6a7a;
-    margin-bottom: 8px;
-}
-.match-item {
-    background: #14141f;
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    border: 1px solid #1e1e32;
-    transition: transform 0.2s, border-color 0.2s;
-}
-.match-item:active { transform: scale(0.98); }
-.match-item .tournament {
-    font-size: 11px;
-    color: #6a6a7a;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
-}
-.match-item .teams {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-weight: 600;
-}
-.match-item .time {
-    font-size: 13px;
-    color: #6a6a7a;
-    margin-top: 4px;
-}
-.match-item .ai-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 12px;
-    margin-top: 6px;
-}
-
-/* ============================================
-   ВКЛАДКА AI
-   ============================================ */
-.ai-match-card {
-    background: #14141f;
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    border: 1px solid #1e1e32;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.ai-match-card .left {
+.tournament-sections {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 16px;
+    margin-top: 8px;
 }
-.ai-match-card .left .tournament {
-    font-size: 11px;
+.tournament-section {
+    background: #14141f;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid #1e1e32;
+}
+.tournament-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+.tournament-section-sub {
+    font-size: 12px;
     color: #6a6a7a;
-    text-transform: uppercase;
+    margin-bottom: 8px;
 }
-.ai-match-card .left .teams {
+.tournament-section-matches {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.tournament-match {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #0a0a0f;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.tournament-match:hover { background: #1a1a2e; }
+.tournament-match .teams {
     font-weight: 600;
+    font-size: 14px;
 }
-.ai-match-card .right {
-    text-align: right;
-}
-.ai-match-card .right .time {
-    font-size: 13px;
-    color: #6a6a7a;
-}
-.ai-match-card .right .badge {
+.tournament-match .badge {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     font-size: 10px;
     font-weight: 700;
     padding: 2px 10px;
     border-radius: 12px;
-    margin-top: 4px;
-    display: inline-block;
+}
+.tournament-match .time {
+    font-size: 12px;
+    color: #6a6a7a;
 }
 
 /* ============================================
