@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UsserAI Football</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <div class="header">
+            <span class="header-title">⚽ UsserAI</span>
+            <div class="header-user">
+                <span id="userName">Гость</span>
+            </div>
+        </div>
+        
+        <!-- Screen: Main Menu -->
+        <div id="screen-main">
+            <div class="stats-card">
+                <div class="stats-title">🎁 Бесплатные анализы</div>
+                <div class="stats-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <span class="stats-text" id="statsText">0 / 3</span>
+                </div>
+            </div>
+            
+            <div class="section-title">🏆 Лиги</div>
+            <div class="league-grid" id="leagueGrid">
+                <div class="loading">Загрузка лиг<span class="loading-dots"></span></div>
+            </div>
+        </div>
+        
+        <!-- Screen: Matches -->
+        <div id="screen-matches" class="hidden">
+            <button class="back-btn" id="backToLeagues">← Назад к лигам</button>
+            <div class="section-title" id="matchesTitle">Матчи</div>
+            <div id="matchesList">
+                <div class="loading">Загрузка матчей<span class="loading-dots"></span></div>
+            </div>
+        </div>
+        
+        <!-- Screen: Analysis -->
+        <div id="screen-analysis" class="hidden">
+            <button class="back-btn" id="backToMatches">← Назад к матчам</button>
+            <div id="analysisContent">
+                <div class="loading">Загрузка анализа<span class="loading-dots"></span></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" data-screen="main">
+            <div class="icon">🏠</div>
+            <div class="label">Главная</div>
+        </div>
+        <div class="nav-item" data-screen="tariffs">
+            <div class="icon">💎</div>
+            <div class="label">Тарифы</div>
+        </div>
+        <div class="nav-item" data-screen="profile">
+            <div class="icon">👤</div>
+            <div class="label">Профиль</div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
